@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Component,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Box, Check, Layers, RotateCw } from 'lucide-react';
@@ -142,6 +149,38 @@ function AssemblyMesh({ finish, selectedOptionIds, bomOptions }: AssemblyScenePr
   );
 }
 
+interface CanvasErrorBoundaryProps {
+  onError: () => void;
+  fallback: ReactNode;
+  children: ReactNode;
+}
+
+interface CanvasErrorBoundaryState {
+  hasError: boolean;
+}
+
+class CanvasErrorBoundary extends Component<
+  CanvasErrorBoundaryProps,
+  CanvasErrorBoundaryState
+> {
+  override state: CanvasErrorBoundaryState = { hasError: false };
+
+  static getDerivedStateFromError(): CanvasErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  override componentDidCatch() {
+    this.props.onError();
+  }
+
+  override render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
 function detectWebGlSupport(): boolean {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return false;
@@ -152,7 +191,12 @@ function detectWebGlSupport(): boolean {
       canvas.getContext('webgl2') ??
       canvas.getContext('webgl') ??
       canvas.getContext('experimental-webgl');
-    return Boolean(gl);
+    if (!gl) {
+      return false;
+    }
+    const webglCtx = gl as Partial<WebGLRenderingContext>;
+    webglCtx.getExtension?.('WEBGL_lose_context')?.loseContext();
+    return true;
   } catch {
     return false;
   }
@@ -176,6 +220,9 @@ export function ProductConfigurator3D({
   className,
 }: ProductConfigurator3DProps) {
   const [webglSupported, setWebglSupported] = useState(false);
+  const [webglFailed, setWebglFailed] = useState(false);
+  const webglCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const contextLostHandlerRef = useRef<((event: Event) => void) | null>(null);
 
   const defaultFinish = useMemo(() => {
     if (finishes.length === 0) return null;
@@ -197,6 +244,14 @@ export function ProductConfigurator3D({
     if (detectWebGlSupport()) {
       setWebglSupported(true);
     }
+    return () => {
+      if (webglCanvasRef.current && contextLostHandlerRef.current) {
+        webglCanvasRef.current.removeEventListener(
+          'webglcontextlost',
+          contextLostHandlerRef.current,
+        );
+      }
+    };
   }, []);
 
   const activeFinish = useMemo(
@@ -247,6 +302,93 @@ export function ProductConfigurator3D({
   }
 
   const activeSwatch = activeFinish?.swatchHex ?? '#1F2633';
+  const isWebGlActive = webglSupported && !webglFailed && Boolean(activeFinish);
+
+  const schematicFallback = (
+    <div
+      data-webgl-fallback="true"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.75rem',
+        padding: '1rem 0',
+      }}
+    >
+      <svg
+        width="220"
+        height="180"
+        viewBox="0 0 220 180"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label={`${title} engineering schematic`}
+      >
+        <title>{`${title} engineering schematic`}</title>
+        {/* Grid crosshairs */}
+        <line x1="110" y1="8" x2="110" y2="172" stroke="#1F2633" strokeDasharray="3 3" />
+        <line x1="20" y1="90" x2="200" y2="90" stroke="#1F2633" strokeDasharray="3 3" />
+        {/* Rotor disc */}
+        <circle
+          cx="110"
+          cy="90"
+          r="62"
+          fill={activeSwatch}
+          fillOpacity="0.22"
+          stroke={activeSwatch}
+          strokeWidth="3"
+        />
+        {/* Precision cooling ring */}
+        <circle
+          cx="110"
+          cy="90"
+          r="40"
+          stroke="#00E599"
+          strokeWidth="2"
+          strokeDasharray="6 4"
+        />
+        {/* Center hub */}
+        <circle cx="110" cy="90" r="18" fill="#12161E" stroke="#F4F6F9" strokeWidth="2" />
+        {/* Caliper block */}
+        <rect
+          x="150"
+          y="56"
+          width="28"
+          height="68"
+          rx="3"
+          fill="#12161E"
+          stroke="#00E599"
+          strokeWidth="2"
+        />
+        {/* Active BOM option indicator nodes */}
+        {selection.selectedOptions.map((opt, idx) => (
+          <circle
+            key={opt.id}
+            cx={58 + idx * 24}
+            cy={32}
+            r={5}
+            fill={idx % 2 === 0 ? '#00E599' : '#F59E0B'}
+          />
+        ))}
+      </svg>
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.375rem',
+          fontFamily: 'var(--font-mono, "JetBrains Mono", ui-monospace, monospace)',
+          fontSize: '0.75rem',
+          color: 'var(--color-ziro-muted, #94A3B8)',
+        }}
+      >
+        <Box size={14} color="#00E599" aria-hidden="true" />
+        <span>
+          WebGL unavailable in SSR/headless preview · {activeFinish?.label ?? 'Standard'}
+        </span>
+      </span>
+    </div>
+  );
 
   return (
     <section
@@ -289,110 +431,58 @@ export function ProductConfigurator3D({
         >
           <MonoCell kind="sku" value={sku} highlight="mint" />
           <StatusBadge
-            variant={webglSupported ? 'live-sync' : 'zero-fee'}
-            label={webglSupported ? 'WebGL 3D Active' : 'Interactive Schematic'}
+            variant={isWebGlActive ? 'live-sync' : 'zero-fee'}
+            label={isWebGlActive ? 'WebGL 3D Active' : 'Interactive Schematic'}
+            ariaLabel={
+              isWebGlActive
+                ? '3D Viewport Status: WebGL 3D Active'
+                : '3D Viewport Status: Interactive Schematic'
+            }
           />
         </div>
 
-        {webglSupported && activeFinish ? (
-          <div style={{ width: '100%', height: '260px' }} data-webgl-canvas="true">
-            <Canvas camera={{ position: [2.6, 1.9, 3.0], fov: 40 }} dpr={[1, 2]}>
-              <color attach="background" args={['#090B0E']} />
-              <ambientLight intensity={0.45} />
-              <directionalLight position={[4, 6, 4]} intensity={1.5} />
-              <pointLight position={[-3, 2, -2]} intensity={0.85} color="#00E599" />
-              <AssemblyMesh
-                finish={activeFinish}
-                selectedOptionIds={selection.selectedIds}
-                bomOptions={bomOptions}
-              />
-              <OrbitControls enablePan={false} minDistance={2} maxDistance={5.5} />
-            </Canvas>
-          </div>
-        ) : (
-          <div
-            data-webgl-fallback="true"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.75rem',
-              padding: '1rem 0',
-            }}
+        {isWebGlActive && activeFinish ? (
+          <CanvasErrorBoundary
+            fallback={schematicFallback}
+            onError={() => setWebglFailed(true)}
           >
-            <svg
-              width="220"
-              height="180"
-              viewBox="0 0 220 180"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label={`${title} engineering schematic`}
-            >
-              <title>{`${title} engineering schematic`}</title>
-              {/* Grid crosshairs */}
-              <line x1="110" y1="8" x2="110" y2="172" stroke="#1F2633" strokeDasharray="3 3" />
-              <line x1="20" y1="90" x2="200" y2="90" stroke="#1F2633" strokeDasharray="3 3" />
-              {/* Rotor disc */}
-              <circle
-                cx="110"
-                cy="90"
-                r="62"
-                fill={activeSwatch}
-                fillOpacity="0.22"
-                stroke={activeSwatch}
-                strokeWidth="3"
-              />
-              {/* Precision cooling ring */}
-              <circle
-                cx="110"
-                cy="90"
-                r="40"
-                stroke="#00E599"
-                strokeWidth="2"
-                strokeDasharray="6 4"
-              />
-              {/* Center hub */}
-              <circle cx="110" cy="90" r="18" fill="#12161E" stroke="#F4F6F9" strokeWidth="2" />
-              {/* Caliper block */}
-              <rect
-                x="150"
-                y="56"
-                width="28"
-                height="68"
-                rx="3"
-                fill="#12161E"
-                stroke="#00E599"
-                strokeWidth="2"
-              />
-              {/* Active BOM option indicator nodes */}
-              {selection.selectedOptions.map((opt, idx) => (
-                <circle
-                  key={opt.id}
-                  cx={58 + idx * 24}
-                  cy={32}
-                  r={5}
-                  fill={idx % 2 === 0 ? '#00E599' : '#F59E0B'}
+            <div style={{ width: '100%', height: '260px' }} data-webgl-canvas="true">
+              <Canvas
+                camera={{ position: [2.6, 1.9, 3.0], fov: 40 }}
+                dpr={[1, 2]}
+                onCreated={({ gl }) => {
+                  if (webglCanvasRef.current && contextLostHandlerRef.current) {
+                    webglCanvasRef.current.removeEventListener(
+                      'webglcontextlost',
+                      contextLostHandlerRef.current,
+                    );
+                  }
+                  const handleContextLost = (event: Event) => {
+                    event.preventDefault();
+                    setWebglFailed(true);
+                  };
+                  webglCanvasRef.current = gl.domElement;
+                  contextLostHandlerRef.current = handleContextLost;
+                  gl.domElement.addEventListener('webglcontextlost', handleContextLost, {
+                    once: true,
+                  });
+                }}
+              >
+                <color attach="background" args={['#090B0E']} />
+                <ambientLight intensity={0.45} />
+                <directionalLight position={[4, 6, 4]} intensity={1.5} />
+                <pointLight position={[-3, 2, -2]} intensity={0.85} color="#00E599" />
+                <AssemblyMesh
+                  finish={activeFinish}
+                  selectedOptionIds={selection.selectedIds}
+                  bomOptions={bomOptions}
                 />
-              ))}
-            </svg>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                fontFamily: 'var(--font-mono, "JetBrains Mono", ui-monospace, monospace)',
-                fontSize: '0.75rem',
-                color: 'var(--color-ziro-muted, #94A3B8)',
-              }}
-            >
-              <Box size={14} color="#00E599" aria-hidden="true" />
-              <span>
-                WebGL unavailable in SSR/headless preview · {activeFinish?.label ?? 'Standard'}
-              </span>
-            </span>
-          </div>
+                <OrbitControls enablePan={false} minDistance={2} maxDistance={5.5} />
+              </Canvas>
+            </div>
+          </CanvasErrorBoundary>
+        ) : (
+          schematicFallback
         )}
 
         <div

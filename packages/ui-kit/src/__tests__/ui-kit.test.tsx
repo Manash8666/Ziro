@@ -1,8 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { Window } from 'happy-dom';
+import { act } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   MetricCard,
   MonoCell,
@@ -216,6 +219,7 @@ describe('@ziro/ui-kit/3d configurator', () => {
     expect(html).toContain('PAD-CERAMIC-01');
     expect(html).toContain('13,500.00');
     expect(html).toContain('data-webgl-fallback="true"');
+    expect(html).toContain('aria-label="3D Viewport Status: Interactive Schematic"');
     expect(html).toContain('<svg');
 
     const configuratorSource = readFileSync(
@@ -243,5 +247,202 @@ describe('@ziro/ui-kit/3d configurator', () => {
     expect(html).toContain('15,100.00');
     expect(html).toContain('Add Configured Assembly');
     expect(html).toContain('2 BOM Add-ons');
+  });
+
+  describe('client DOM interactions & WebGL fallback boundary', () => {
+    let happyWindow: Window;
+    let container: HTMLDivElement;
+    let root: Root | null = null;
+    const prevActFlag = (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT;
+
+    beforeEach(() => {
+      happyWindow = new Window();
+      (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
+      Object.assign(globalThis, {
+        window: happyWindow,
+        document: happyWindow.document,
+        screen: happyWindow.screen,
+        ResizeObserver: happyWindow.ResizeObserver,
+        HTMLElement: happyWindow.HTMLElement,
+        HTMLCanvasElement: happyWindow.HTMLCanvasElement,
+        Node: happyWindow.Node,
+        Event: happyWindow.Event,
+      });
+      container = happyWindow.document.createElement('div') as unknown as HTMLDivElement;
+      happyWindow.document.body.appendChild(container as unknown as Node);
+    });
+
+    afterEach(async () => {
+      if (root) {
+        await act(async () => {
+          root?.unmount();
+        });
+        root = null;
+      }
+      await happyWindow.close();
+      (globalThis as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = prevActFlag;
+      Reflect.deleteProperty(globalThis, 'window');
+      Reflect.deleteProperty(globalThis, 'document');
+      Reflect.deleteProperty(globalThis, 'screen');
+      Reflect.deleteProperty(globalThis, 'ResizeObserver');
+      Reflect.deleteProperty(globalThis, 'HTMLElement');
+      Reflect.deleteProperty(globalThis, 'HTMLCanvasElement');
+      Reflect.deleteProperty(globalThis, 'Node');
+      Reflect.deleteProperty(globalThis, 'Event');
+    });
+
+    it('updates finish, toggles BOM options, and fires onSelectionChange + onAddToCart with integer minor pricing', async () => {
+      const onSelectionChange = vi.fn();
+      const onAddToCart = vi.fn();
+
+      await act(async () => {
+        root = createRoot(container);
+        root.render(
+          <ProductConfigurator3D
+            sku="KIT-BRAKE-01"
+            title="Apex Ventilated Brake Kit"
+            basePriceMinor={1_200_000}
+            currency="INR"
+            finishes={finishes}
+            bomOptions={bomOptions}
+            onSelectionChange={onSelectionChange}
+            onAddToCart={onAddToCart}
+          />,
+        );
+      });
+
+      const mintFinishBtn = container.querySelector('button[role="radio"]:nth-of-type(2)') as HTMLButtonElement;
+      expect(mintFinishBtn.textContent).toContain('Electric Mint Ceramic');
+
+      await act(async () => {
+        mintFinishBtn.click();
+      });
+
+      expect(mintFinishBtn.getAttribute('aria-checked')).toBe('true');
+      expect(container.textContent).toContain('14,250.00');
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          sku: 'KIT-BRAKE-01',
+          totalPriceMinor: 1_425_000,
+          deltaMinor: 225_000,
+          selectedOptionalSkus: ['PAD-CERAMIC-01'],
+          materialVariant: 'mint-ceramic',
+        }),
+      );
+
+      const bomButtons = Array.from(container.querySelectorAll('button[aria-pressed]')) as HTMLButtonElement[];
+      const lineBtn = bomButtons.find((btn) => btn.textContent?.includes('Braided Stainless Hydraulic Line'));
+      const padBtn = bomButtons.find((btn) => btn.textContent?.includes('High-Temp Ceramic Pad Set'));
+      expect(lineBtn).toBeDefined();
+      expect(padBtn).toBeDefined();
+
+      await act(async () => {
+        lineBtn?.click();
+      });
+
+      expect(lineBtn?.getAttribute('aria-pressed')).toBe('true');
+      expect(container.textContent).toContain('15,100.00');
+      expect(onSelectionChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          totalPriceMinor: 1_510_000,
+          selectedOptionalSkus: ['PAD-CERAMIC-01', 'LINE-SS-01'],
+          materialVariant: 'mint-ceramic',
+        }),
+      );
+
+      await act(async () => {
+        padBtn?.click();
+      });
+
+      expect(padBtn?.getAttribute('aria-pressed')).toBe('false');
+      expect(container.textContent).toContain('13,600.00');
+
+      const addToCartBtn = Array.from(container.querySelectorAll('button')).find((btn) =>
+        btn.textContent?.includes('Add Configured Assembly'),
+      ) as HTMLButtonElement;
+
+      await act(async () => {
+        addToCartBtn.click();
+      });
+
+      expect(onAddToCart).toHaveBeenCalledTimes(1);
+      expect(onAddToCart).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sku: 'KIT-BRAKE-01',
+          totalPriceMinor: 1_360_000,
+          selectedOptionalSkus: ['LINE-SS-01'],
+          materialVariant: 'mint-ceramic',
+        }),
+      );
+    });
+
+    it('cleans up the WebGL probe context and falls back to schematic via ErrorBoundary if Canvas fails', async () => {
+      const loseContextSpy = vi.fn();
+      let probeCalls = 0;
+      const canvasProto = happyWindow.HTMLCanvasElement.prototype as unknown as {
+        getContext: (type: string) => unknown;
+      };
+      const htmlElProto = happyWindow.HTMLElement.prototype as unknown as {
+        getBoundingClientRect: () => DOMRect;
+      };
+      const originalGetContext = canvasProto.getContext;
+      const originalGetBoundingClientRect = htmlElProto.getBoundingClientRect;
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+      htmlElProto.getBoundingClientRect = () =>
+        ({
+          width: 320,
+          height: 260,
+          top: 0,
+          left: 0,
+          bottom: 260,
+          right: 320,
+          x: 0,
+          y: 0,
+          toJSON: () => ({}),
+        }) as DOMRect;
+
+      canvasProto.getContext = (contextId: string) => {
+        if ((contextId === 'webgl2' || contextId === 'webgl') && probeCalls === 0) {
+          probeCalls += 1;
+          return {
+            getExtension: (extName: string) =>
+              extName === 'WEBGL_lose_context' ? { loseContext: loseContextSpy } : null,
+          };
+        }
+        return null;
+      };
+
+      try {
+        await act(async () => {
+          root = createRoot(container);
+          root.render(
+            <ProductConfigurator3D
+              sku="KIT-BRAKE-01"
+              title="Apex Ventilated Brake Kit"
+              basePriceMinor={1_200_000}
+              currency="INR"
+              finishes={finishes}
+              bomOptions={bomOptions}
+            />,
+          );
+        });
+
+        await act(async () => {
+          happyWindow.dispatchEvent(new happyWindow.Event('resize') as unknown as Event);
+          await new Promise((resolvePromise) => setTimeout(resolvePromise, 20));
+        });
+
+        expect(loseContextSpy).toHaveBeenCalledTimes(1);
+        expect(container.querySelector('[data-webgl-fallback="true"]')).not.toBeNull();
+        expect(
+          container.querySelector('[aria-label="3D Viewport Status: Interactive Schematic"]'),
+        ).not.toBeNull();
+      } finally {
+        canvasProto.getContext = originalGetContext;
+        htmlElProto.getBoundingClientRect = originalGetBoundingClientRect;
+        errorSpy.mockRestore();
+      }
+    });
   });
 });
