@@ -140,6 +140,10 @@ services:
         APP_DIR: apps/storefront
         APP_PKG: "@ziro/storefront"
         PORT: "3000"
+        NEXT_PUBLIC_COMMERCE_ENGINE_URL: ${NEXT_PUBLIC_COMMERCE_ENGINE_URL:-http://localhost:9000}
+        NEXT_PUBLIC_PULSE_AI_URL: ${NEXT_PUBLIC_PULSE_AI_URL:-http://localhost:8000}
+        NEXT_PUBLIC_TENANCY_MODE: ${NEXT_PUBLIC_TENANCY_MODE:-single}
+        NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS: ${NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS:-0}
     container_name: ziro-storefront
     restart: unless-stopped
     environment:
@@ -179,6 +183,10 @@ services:
         APP_DIR: apps/pos-terminal
         APP_PKG: "@ziro/pos"
         PORT: "3001"
+        NEXT_PUBLIC_COMMERCE_ENGINE_URL: ${NEXT_PUBLIC_COMMERCE_ENGINE_URL:-http://localhost:9000}
+        NEXT_PUBLIC_PULSE_AI_URL: ${NEXT_PUBLIC_PULSE_AI_URL:-http://localhost:8000}
+        NEXT_PUBLIC_TENANCY_MODE: ${NEXT_PUBLIC_TENANCY_MODE:-single}
+        NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS: ${NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS:-0}
     container_name: ziro-pos-terminal
     restart: unless-stopped
     environment:

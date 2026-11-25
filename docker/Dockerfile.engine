@@ -12,7 +12,7 @@ COPY packages/ziro-rails/package.json ./packages/ziro-rails/
 COPY apps/commerce-engine/package.json ./apps/commerce-engine/
 COPY apps/storefront/package.json ./apps/storefront/
 COPY apps/pos-terminal/package.json ./apps/pos-terminal/
-RUN pnpm install --frozen-lockfile --filter @ziro/core...
+RUN pnpm install --frozen-lockfile --filter . --filter @ziro/core...
 
 FROM deps AS builder
 COPY packages/shared-types ./packages/shared-types

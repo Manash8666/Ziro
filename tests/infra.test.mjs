@@ -61,6 +61,56 @@ test('docker-compose, Dockerfiles, CI, and .env.example define full stack and ZI
     assert.ok(fs.existsSync(dockerfile), `Missing ${dockerfile}`);
   }
 
+  assert.ok(fs.existsSync('.dockerignore'), 'Missing .dockerignore');
+  const dockerignore = fs.readFileSync('.dockerignore', 'utf8');
+  for (const pattern of [
+    '**/node_modules',
+    '.git',
+    '.env',
+    '.env.*',
+    '!.env.example',
+    '**/.next',
+    '**/dist',
+    '**/.medusa',
+    '**/.turbo',
+    '.venv',
+    '__pycache__',
+    '.superpowers',
+    '.worktrees',
+    'worktrees',
+  ]) {
+    assert.ok(dockerignore.includes(pattern), `Missing .dockerignore pattern: ${pattern}`);
+  }
+
+  const dfEngine = fs.readFileSync('docker/Dockerfile.engine', 'utf8');
+  assert.ok(dfEngine.includes('--filter . --filter @ziro/core...'), 'Dockerfile.engine must include --filter .');
+
+  const dfWeb = fs.readFileSync('docker/Dockerfile.web', 'utf8');
+  assert.ok(dfWeb.includes('--filter . --filter ${APP_PKG}...'), 'Dockerfile.web must include --filter .');
+  for (const argName of [
+    'ARG NEXT_PUBLIC_COMMERCE_ENGINE_URL',
+    'ARG NEXT_PUBLIC_PULSE_AI_URL',
+    'ARG NEXT_PUBLIC_TENANCY_MODE',
+    'ARG NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS',
+  ]) {
+    assert.ok(dfWeb.includes(argName), `Dockerfile.web missing ${argName}`);
+  }
+
+  assert.ok(fs.existsSync('pnpm-lock.yaml'), 'Missing pnpm-lock.yaml');
+  const lockfile = fs.readFileSync('pnpm-lock.yaml', 'utf8');
+  for (const dep of ['typescript:', 'turbo:', 'rimraf:', "'@types/node':"]) {
+    assert.ok(lockfile.includes(dep), `pnpm-lock.yaml missing root devDependency ${dep}`);
+  }
+
+  for (const buildArg of [
+    'NEXT_PUBLIC_COMMERCE_ENGINE_URL: ${NEXT_PUBLIC_COMMERCE_ENGINE_URL:-http://localhost:9000}',
+    'NEXT_PUBLIC_PULSE_AI_URL: ${NEXT_PUBLIC_PULSE_AI_URL:-http://localhost:8000}',
+    'NEXT_PUBLIC_TENANCY_MODE: ${NEXT_PUBLIC_TENANCY_MODE:-single}',
+    'NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS: ${NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS:-0}',
+  ]) {
+    assert.ok(compose.includes(buildArg), `docker-compose.yml missing build/env setting: ${buildArg}`);
+  }
+
   const ci = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
   for (const cmd of ['pnpm typecheck', 'pnpm build', 'pnpm test', 'pytest apps/pulse-ai/tests']) {
     assert.ok(ci.includes(cmd), `Missing CI step: ${cmd}`);
