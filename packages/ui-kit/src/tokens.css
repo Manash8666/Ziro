@@ -1,0 +1,42 @@
+@theme {
+  --color-ziro-obsidian: #090B0E;
+  --color-ziro-slate: #12161E;
+  --color-ziro-border: #1F2633;
+  --color-ziro-mint: #00E599;
+  --color-ziro-amber: #F59E0B;
+  --color-ziro-alabaster: #F4F6F9;
+  --color-ziro-muted: #94A3B8;
+  --color-ziro-danger: #EF4444;
+
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+:root {
+  --color-ziro-obsidian: #090B0E;
+  --color-ziro-slate: #12161E;
+  --color-ziro-border: #1F2633;
+  --color-ziro-mint: #00E599;
+  --color-ziro-amber: #F59E0B;
+  --color-ziro-alabaster: #F4F6F9;
+  --color-ziro-muted: #94A3B8;
+  --color-ziro-danger: #EF4444;
+
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+
+.ziro-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.ziro-focus-ring:focus-visible {
+  outline: 2px solid var(--color-ziro-mint, #00E599);
+  outline-offset: 2px;
+}
+
+.ziro-focus-ring-amber:focus-visible {
+  outline: 2px solid var(--color-ziro-amber, #F59E0B);
+  outline-offset: 2px;
+}
