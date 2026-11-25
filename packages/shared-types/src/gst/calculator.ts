@@ -259,7 +259,7 @@ function assertBasisPoints(value: number, fieldName: string): number {
 
 function assertStateCode(stateCode: string, fieldName: string): string {
   const normalized = stateCode.trim();
-  if (!(normalized in INDIAN_STATE_CODES)) {
+  if (!Object.hasOwn(INDIAN_STATE_CODES, normalized)) {
     throw new Error(`${fieldName} is not a valid Indian GST state code: ${stateCode}`);
   }
   return normalized;
@@ -338,7 +338,7 @@ export function validateGstin(gstin: string): GstinValidationResult {
     return { valid: false, error: 'Invalid GSTIN structural format' };
   }
   const stateCode = normalized.slice(0, 2);
-  if (!(stateCode in INDIAN_STATE_CODES)) {
+  if (!Object.hasOwn(INDIAN_STATE_CODES, stateCode)) {
     return { valid: false, error: `Unknown Indian GST state code: ${stateCode}` };
   }
   const expectedCheckDigit = computeGstinCheckDigit(normalized.slice(0, 14));
@@ -412,11 +412,19 @@ export function buildEwayBillPayload(input: EwayBillInput): EwayBillPayload | nu
   const totalTaxMinor = assertMoneyMinor(input.totalTaxMinor, 'totalTaxMinor');
   const cgstMinor = assertMoneyMinor(input.cgstMinor ?? 0, 'cgstMinor');
   const sgstMinor = assertMoneyMinor(input.sgstMinor ?? 0, 'sgstMinor');
-  const igstMinor = assertMoneyMinor(input.igstMinor ?? totalTaxMinor, 'igstMinor');
+  const defaultIgstMinor =
+    input.cgstMinor === undefined && input.sgstMinor === undefined ? totalTaxMinor : 0;
+  const igstMinor = assertMoneyMinor(input.igstMinor ?? defaultIgstMinor, 'igstMinor');
   const consignmentThresholdMinor = assertMoneyMinor(
     input.consignmentValueMinor ?? taxableMinor,
     'consignmentValueMinor',
   );
+
+  if (cgstMinor + sgstMinor + igstMinor !== totalTaxMinor) {
+    throw new Error(
+      `Tax component mismatch: cgstMinor (${cgstMinor}) + sgstMinor (${sgstMinor}) + igstMinor (${igstMinor}) !== totalTaxMinor (${totalTaxMinor})`,
+    );
+  }
 
   const supplierCheck = validateGstin(input.supplierGstin);
   if (!supplierCheck.valid || !supplierCheck.stateCode) {
@@ -447,14 +455,37 @@ export function buildEwayBillPayload(input: EwayBillInput): EwayBillPayload | nu
   const fromStateCode = input.originStateCode
     ? assertStateCode(input.originStateCode, 'originStateCode')
     : supplierCheck.stateCode;
-  const toStateCode = derivedRecipientState
+  const resolvedToStateCode = derivedRecipientState
     ? assertStateCode(derivedRecipientState, 'destinationStateCode')
-    : fromStateCode;
+    : undefined;
 
-  const isInterState = input.isInterState ?? fromStateCode !== toStateCode;
+  const isInterState =
+    input.isInterState ??
+    (resolvedToStateCode !== undefined ? fromStateCode !== resolvedToStateCode : false);
+
+  if (isInterState) {
+    if (!resolvedToStateCode) {
+      throw new Error(
+        'Inter-state e-Way bill requires a destinationStateCode or recipientGstin',
+      );
+    }
+    if (resolvedToStateCode === fromStateCode) {
+      throw new Error(
+        `Inter-state e-Way bill requires destinationStateCode (${resolvedToStateCode}) to differ from originStateCode (${fromStateCode})`,
+      );
+    }
+    if (cgstMinor !== 0 || sgstMinor !== 0) {
+      throw new Error(
+        'Inter-state e-Way bill requires cgstMinor === 0 and sgstMinor === 0',
+      );
+    }
+  }
+
   if (!isInterState || consignmentThresholdMinor < EWAY_BILL_THRESHOLD_MINOR) {
     return null;
   }
+
+  const toStateCode = resolvedToStateCode!;
 
   const cleanHsn = normalizeHsCode(input.hsnCode);
   const gstRateBps = resolveGstRateBps(cleanHsn, input.gstRateBps);

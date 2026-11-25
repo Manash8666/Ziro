@@ -100,6 +100,22 @@ describe('Indian GST, GSTIN, e-Way & Global DDP', () => {
         destinationStateCode: '27',
       }),
     ).toThrow();
+    expect(() =>
+      calculateGstBreakup({
+        taxableMinor: 1000,
+        hsnCode: '8708',
+        originStateCode: 'toString',
+        destinationStateCode: '27',
+      }),
+    ).toThrow();
+    expect(() =>
+      calculateGstBreakup({
+        taxableMinor: 1000,
+        hsnCode: '8708',
+        originStateCode: '27',
+        destinationStateCode: 'constructor',
+      }),
+    ).toThrow();
   });
 
   it('applies IGST for inter-state and emits e-Way payload at >= 50000 INR threshold', () => {
@@ -161,6 +177,56 @@ describe('Indian GST, GSTIN, e-Way & Global DDP', () => {
       buildEwayBillPayload({
         ...inter,
         fromPincode: '40001',
+        toPincode: '560001',
+        supplierGstin: '27ABCDE1234F1Z0',
+      }),
+    ).toThrow();
+
+    // Inter-state e-Way bill requires distinct destination state (or recipient GSTIN in another state)
+    expect(() =>
+      buildEwayBillPayload({
+        taxableMinor: 5_000_000,
+        totalTaxMinor: 900_000,
+        isInterState: true,
+        hsnCode: '8708',
+        fromPincode: '400001',
+        toPincode: '560001',
+        supplierGstin: '27ABCDE1234F1Z0',
+      }),
+    ).toThrow();
+    expect(() =>
+      buildEwayBillPayload({
+        taxableMinor: 5_000_000,
+        totalTaxMinor: 900_000,
+        isInterState: true,
+        originStateCode: '27',
+        destinationStateCode: '27',
+        hsnCode: '8708',
+        fromPincode: '400001',
+        toPincode: '400002',
+        supplierGstin: '27ABCDE1234F1Z0',
+      }),
+    ).toThrow();
+
+    // Tax component conservation and zero CGST/SGST invariant for inter-state e-Way bills
+    expect(() =>
+      buildEwayBillPayload({
+        ...inter,
+        cgstMinor: 100,
+        sgstMinor: 0,
+        igstMinor: inter.totalTaxMinor,
+        fromPincode: '400001',
+        toPincode: '560001',
+        supplierGstin: '27ABCDE1234F1Z0',
+      }),
+    ).toThrow();
+    expect(() =>
+      buildEwayBillPayload({
+        ...inter,
+        cgstMinor: 450_000,
+        sgstMinor: 450_000,
+        igstMinor: 0,
+        fromPincode: '400001',
         toPincode: '560001',
         supplierGstin: '27ABCDE1234F1Z0',
       }),
