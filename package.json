@@ -2,6 +2,11 @@
   "name": "ziro-commerce-os",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "packageManager": "pnpm@12.15.0",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -10,10 +15,9 @@
     "test": "turbo run test"
   },
   "devDependencies": {
-    "turbo": "^2.3.3",
-    "typescript": "^5.7.2",
+    "@types/node": "^22.10.1",
     "rimraf": "^6.0.1",
-    "@types/node": "^22.10.1"
-  },
-  "packageManager": "pnpm@9.14.4"
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
 }

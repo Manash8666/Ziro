@@ -13,7 +13,14 @@ services:
       - "5432:5432"
     volumes:
       - ziro_pgdata:/home/postgres/pgdata/data
-      - ./postgres/init-extensions.sql:/docker-entrypoint-initdb.d/init-extensions.sql:ro
+      - ./postgres/init-extensions.sql:/docker-entrypoint-initdb.d/000-init-extensions.sql:ro
+      - ./postgres/001_ziro_extensions.sql:/docker-entrypoint-initdb.d/001_ziro_extensions.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ziro} -d ${POSTGRES_DB:-ziro_core}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   valkey:
     image: valkey/valkey:8-alpine
@@ -22,16 +29,180 @@ services:
     command: valkey-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     ports:
       - "6379:6379"
+    volumes:
+      - ziro_valkeydata:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   meilisearch:
     image: getmeili/meilisearch:v1.12
     container_name: ziro-meilisearch
     restart: unless-stopped
     environment:
-      MEILI_ENV: development
-      MEILI_MASTER_KEY: ziro_meili_master_key_change_me
+      MEILI_ENV: ${MEILI_ENV:-development}
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-ziro_meili_master_key_change_me}
     ports:
       - "7700:7700"
+    volumes:
+      - ziro_meilidata:/meili_data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:7700/health >/dev/null 2>&1 || curl -sf http://127.0.0.1:7700/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pulse-ai:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.pulse
+    container_name: ziro-pulse-ai
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD:-ziro_dev_secret}@postgres:5432/${POSTGRES_DB:-ziro_core}
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      KYA_SIGNING_SECRET: ${KYA_SIGNING_SECRET:-ziro_kya_signing_secret_change_me_in_production_64_chars_minimum}
+      ZIRO_INTERNAL_SECRET: ${ZIRO_INTERNAL_SECRET:-ziro_internal_service_secret_change_me_in_production}
+      ZIRO_PLATFORM_FEE_BPS: ${ZIRO_PLATFORM_FEE_BPS:-0}
+      TENANCY_MODE: ${TENANCY_MODE:-single}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-local_hash}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-BAAI/bge-m3}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-1024}
+      RTO_HIGH_RISK_THRESHOLD: ${RTO_HIGH_RISK_THRESHOLD:-0.72}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  commerce-engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.engine
+    container_name: ziro-commerce-engine
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: "9000"
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD:-ziro_dev_secret}@postgres:5432/${POSTGRES_DB:-ziro_core}
+      REDIS_URL: redis://valkey:6379/0
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-ziro_meili_master_key_change_me}
+      PULSE_AI_URL: http://pulse-ai:8000
+      JWT_SECRET: ${JWT_SECRET:-ziro_secret_64_characters_minimum_random_key_string_for_development_jwt}
+      COOKIE_SECRET: ${COOKIE_SECRET:-ziro_secret_64_characters_minimum_random_key_string_for_development_cookie}
+      ZIRO_INTERNAL_SECRET: ${ZIRO_INTERNAL_SECRET:-ziro_internal_service_secret_change_me_in_production}
+      ZIRO_PLATFORM_FEE_BPS: ${ZIRO_PLATFORM_FEE_BPS:-0}
+      TENANCY_MODE: ${TENANCY_MODE:-single}
+      DEFAULT_TENANT_ID: ${DEFAULT_TENANT_ID:-default}
+      POS_CONFLICT_POLICY: ${POS_CONFLICT_POLICY:-FORCE_SALE_WITH_ALERT}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      ONDC_SUBSCRIBER_ID: ${ONDC_SUBSCRIBER_ID:-ziro-seller.ondc.local}
+      ONDC_UNIQUE_KEY_ID: ${ONDC_UNIQUE_KEY_ID:-ziro-key-1}
+      ONDC_PRIVATE_KEY: ${ONDC_PRIVATE_KEY:-}
+      ONDC_PUBLIC_KEY: ${ONDC_PUBLIC_KEY:-}
+      STORE_CORS: ${STORE_CORS:-http://localhost:3000,http://localhost:3001}
+      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:9000,http://localhost:3000,http://localhost:3001}
+      AUTH_CORS: ${AUTH_CORS:-http://localhost:3000,http://localhost:3001,http://localhost:9000}
+    ports:
+      - "9000:9000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  storefront:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        APP_DIR: apps/storefront
+        APP_PKG: "@ziro/storefront"
+        PORT: "3000"
+    container_name: ziro-storefront
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: "3000"
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD:-ziro_dev_secret}@postgres:5432/${POSTGRES_DB:-ziro_core}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:-ziro_payload_secret_change_me_in_production_64_chars_minimum_key}
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      PULSE_AI_URL: http://pulse-ai:8000
+      TENANCY_MODE: ${TENANCY_MODE:-single}
+      ZIRO_PLATFORM_FEE_BPS: ${ZIRO_PLATFORM_FEE_BPS:-0}
+      NEXT_PUBLIC_COMMERCE_ENGINE_URL: ${NEXT_PUBLIC_COMMERCE_ENGINE_URL:-http://localhost:9000}
+      NEXT_PUBLIC_PULSE_AI_URL: ${NEXT_PUBLIC_PULSE_AI_URL:-http://localhost:8000}
+      NEXT_PUBLIC_TENANCY_MODE: ${NEXT_PUBLIC_TENANCY_MODE:-single}
+      NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS: ${NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS:-0}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      commerce-engine:
+        condition: service_healthy
+      pulse-ai:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+
+  pos-terminal:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        APP_DIR: apps/pos-terminal
+        APP_PKG: "@ziro/pos"
+        PORT: "3001"
+    container_name: ziro-pos-terminal
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: "3001"
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      TENANCY_MODE: ${TENANCY_MODE:-single}
+      ZIRO_PLATFORM_FEE_BPS: ${ZIRO_PLATFORM_FEE_BPS:-0}
+      NEXT_PUBLIC_COMMERCE_ENGINE_URL: ${NEXT_PUBLIC_COMMERCE_ENGINE_URL:-http://localhost:9000}
+      NEXT_PUBLIC_TENANCY_MODE: ${NEXT_PUBLIC_TENANCY_MODE:-single}
+      NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS: ${NEXT_PUBLIC_ZIRO_PLATFORM_FEE_BPS:-0}
+    ports:
+      - "3001:3001"
+    depends_on:
+      commerce-engine:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
 
 volumes:
   ziro_pgdata:
+  ziro_valkeydata:
+  ziro_meilidata:
