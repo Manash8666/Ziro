@@ -1,0 +1,37 @@
+name: ziro-commerce-os
+
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg17
+    container_name: ziro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ziro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ziro_dev_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-ziro_core}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ziro_pgdata:/home/postgres/pgdata/data
+      - ./postgres/init-extensions.sql:/docker-entrypoint-initdb.d/init-extensions.sql:ro
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: ziro-valkey
+    restart: unless-stopped
+    command: valkey-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    container_name: ziro-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_ENV: development
+      MEILI_MASTER_KEY: ziro_meili_master_key_change_me
+    ports:
+      - "7700:7700"
+
+volumes:
+  ziro_pgdata:
