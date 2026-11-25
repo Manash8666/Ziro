@@ -200,7 +200,7 @@ export type RtoRiskTier = z.infer<typeof RtoRiskTierSchema>;
 /**
  * Supported checkout payment mode recommendations returned by COD-RTO Shield.
  */
-export const RtoPaymentModeSchema = z.enum(['UPI', 'CARD', 'NETBANKING', 'COD']);
+export const RtoPaymentModeSchema = z.enum(['UPI_INTENT', 'UPI', 'CARD', 'NETBANKING', 'COD']);
 export type RtoPaymentMode = z.infer<typeof RtoPaymentModeSchema>;
 
 /**

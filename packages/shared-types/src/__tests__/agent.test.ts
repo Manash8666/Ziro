@@ -218,10 +218,11 @@ describe('agentic commerce, KYA, RTO Shield & ONDC shared contracts', () => {
       risk_score: 0.78,
       risk_tier: 'HIGH',
       upi_nudge_discount_inr: 100,
-      recommended_payment_modes: ['UPI', 'CARD', 'NETBANKING'],
+      recommended_payment_modes: ['UPI_INTENT', 'UPI', 'CARD', 'NETBANKING'],
       factors: ['rto_history_ratio', 'high_cod_ticket_size'],
     });
     expect(res.risk_tier).toBe('HIGH');
+    expect(res.recommended_payment_modes).toContain('UPI_INTENT');
     expect(res.recommended_payment_modes).toContain('UPI');
   });
 
