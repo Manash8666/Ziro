@@ -16,6 +16,22 @@
     "./providers": {
       "types": "./dist/providers/index.d.ts",
       "import": "./dist/providers/index.js"
+    },
+    "./tax": {
+      "types": "./dist/tax/index.d.ts",
+      "import": "./dist/tax/index.js"
+    },
+    "./fitment": {
+      "types": "./dist/fitment/index.d.ts",
+      "import": "./dist/fitment/index.js"
+    },
+    "./b2b": {
+      "types": "./dist/b2b/index.d.ts",
+      "import": "./dist/b2b/index.js"
+    },
+    "./logistics": {
+      "types": "./dist/logistics/index.d.ts",
+      "import": "./dist/logistics/index.js"
     }
   },
   "scripts": {
