@@ -26,3 +26,6 @@ export {
   type ZiroButtonSize,
   type ZiroButtonVariant,
 } from './components/ZiroButton.js';
+
+export * from './graphics/index.js';
+
