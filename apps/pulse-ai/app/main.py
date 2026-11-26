@@ -5,6 +5,7 @@ from app.routers.agent import router as agent_router
 from app.routers.health import router as health_router
 from app.routers.rto import router as rto_router
 from app.routers.search import router as search_router
+from app.routers.telemetry import router as telemetry_router
 from app.services.acp_service import AcpCheckoutService
 from app.services.commerce_client import (
     CommerceBackendClient,
@@ -45,6 +46,7 @@ def create_app(
     app.include_router(search_router)
     app.include_router(rto_router)
     app.include_router(agent_router)
+    app.include_router(telemetry_router, prefix="/v1/telemetry", tags=["telemetry"])
     return app
 
 
