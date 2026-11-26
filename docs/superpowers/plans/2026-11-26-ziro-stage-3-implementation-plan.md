@@ -49,11 +49,11 @@
   - Slashed-zero `ZiroMark` SVG component with responsive scaling and broken-ring geometry.
   - Code-driven vector SVGs: `ArchitectureDiagram`, `TaxComparisonGraphic`, `AgenticFlowDiagram`, and `TrustBadges`.
 
-- [ ] **Step 1: Write failing graphics tests in `packages/ui-kit/src/__tests__/graphics.test.ts`**
-- [ ] **Step 2: Run test to verify it fails (`pnpm --filter @ziro/ui-kit test`)**
-- [ ] **Step 3: Implement tokens and vector SVG components**
-- [ ] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/ui-kit test && pnpm --filter @ziro/ui-kit build`)**
-- [ ] **Step 5: Commit and push to `origin/feat/ziro-stage-3`**
+- [x] **Step 1: Write failing graphics tests in `packages/ui-kit/src/__tests__/graphics.test.ts`**
+- [x] **Step 2: Run test to verify it fails (`pnpm --filter @ziro/ui-kit test`)**
+- [x] **Step 3: Implement tokens and vector SVG components**
+- [x] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/ui-kit test && pnpm --filter @ziro/ui-kit build`)**
+- [x] **Step 5: Commit and push to `origin/feat/ziro-stage-3`**
 
 ---
 
@@ -76,11 +76,11 @@
   - `ZiroToast`: Floating notification manager with auto-dismiss.
   - `SavingsCalculator`: Interactive GMV tax savings slider ($10k to $10M+) comparing Ziro's 0% GMV fee against Shopify and marketplace take rates.
 
-- [ ] **Step 1: Write failing component tests in `packages/ui-kit/src/__tests__/components-stage3.test.tsx`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement `ZiroTable`, `ZiroDrawer`, `ZiroModal`, `ZiroToast`, and `SavingsCalculator`**
-- [ ] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/ui-kit test && pnpm --filter @ziro/ui-kit build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing component tests in `packages/ui-kit/src/__tests__/components-stage3.test.tsx`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement `ZiroTable`, `ZiroDrawer`, `ZiroModal`, `ZiroToast`, and `SavingsCalculator`**
+- [x] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/ui-kit test && pnpm --filter @ziro/ui-kit build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -98,11 +98,11 @@
   - Product Detail Page with image gallery, fitment compatibility checker, live shipping rate comparison (Delhivery vs. Shiprocket), and BOM inspection drawer.
   - Catalog Page with instant search, category filters, and price ranges across the 100+ seed catalog items.
 
-- [ ] **Step 1: Write failing storefront pages test in `apps/storefront/src/__tests__/pages.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement PDP, Catalog page, BOM drawer, and Product Card**
-- [ ] **Step 4: Verify tests pass and typecheck (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront typecheck`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing storefront pages test in `apps/storefront/src/__tests__/pages.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement PDP, Catalog page, BOM drawer, and Product Card**
+- [x] **Step 4: Verify tests pass and typecheck (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront typecheck`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -118,11 +118,11 @@
   - Cinematic Homepage featuring HeroSlider, 3D interactive showcase, TaxComparisonGraphic, FitmentFinder, and live trust seals.
   - Enhanced 3D Configurator page with material switchers, live price recalculation, and exploded BOM preview.
 
-- [ ] **Step 1: Write failing homepage and configurator tests in `apps/storefront/src/__tests__/homepage.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Enhance Homepage and 3D Configurator pages**
-- [ ] **Step 4: Verify tests pass and build Next.js storefront (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing homepage and configurator tests in `apps/storefront/src/__tests__/homepage.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Enhance Homepage and 3D Configurator pages**
+- [x] **Step 4: Verify tests pass and build Next.js storefront (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -139,11 +139,11 @@
   - `ProtocolPlayground`: Live sandbox testing `/ucp/manifest.json` discovery and simulated KYA agent authorization.
   - Three-tier plan comparison matrix ($49, $149, $499) with explicit 0% GMV fee callout.
 
-- [ ] **Step 1: Write failing portal stage 3 test in `apps/cloud-portal/src/__tests__/portal-stage3.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement ProtocolPlayground and update Cloud Portal homepage**
-- [ ] **Step 4: Verify tests pass and build Next.js portal (`pnpm --filter @ziro/cloud-portal test && pnpm --filter @ziro/cloud-portal build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing portal stage 3 test in `apps/cloud-portal/src/__tests__/portal-stage3.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement ProtocolPlayground and update Cloud Portal homepage**
+- [x] **Step 4: Verify tests pass and build Next.js portal (`pnpm --filter @ziro/cloud-portal test && pnpm --filter @ziro/cloud-portal build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -161,18 +161,18 @@
   - Audio/visual scan indicator triggering mint highlight upon barcode recognition.
   - Quick Action Bar providing single-tap drawer kick, receipt reprint, and offline queue flush.
 
-- [ ] **Step 1: Write failing POS UX tests in `apps/pos-terminal/src/__tests__/pos-ux.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement QuickActionBar, ScanFeedbackBanner, and high-contrast counter layout**
-- [ ] **Step 4: Verify tests pass and build POS app (`pnpm --filter @ziro/pos test && pnpm --filter @ziro/pos build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing POS UX tests in `apps/pos-terminal/src/__tests__/pos-ux.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement QuickActionBar, ScanFeedbackBanner, and high-contrast counter layout**
+- [x] **Step 4: Verify tests pass and build POS app (`pnpm --filter @ziro/pos test && pnpm --filter @ziro/pos build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
 ### Task 7: Full Monorepo Stage 3 Verification & Push
 
-- [ ] **Step 1: Run complete typecheck across all workspaces (`pnpm typecheck`)**
-- [ ] **Step 2: Run complete production build across all workspaces (`pnpm build`)**
-- [ ] **Step 3: Run all Vitest and Pytest test suites (`pnpm test` and `pytest apps/pulse-ai/tests -v`)**
-- [ ] **Step 4: Run license audit (`pnpm licenses list`)**
-- [ ] **Step 5: Commit and push clean tree to `origin/feat/ziro-stage-3`**
+- [x] **Step 1: Run complete typecheck across all workspaces (`pnpm typecheck`)**
+- [x] **Step 2: Run complete production build across all workspaces (`pnpm build`)**
+- [x] **Step 3: Run all Vitest and Pytest test suites (`pnpm test` and `pytest apps/pulse-ai/tests -v`)**
+- [x] **Step 4: Run license audit (`pnpm licenses list`)**
+- [x] **Step 5: Commit and push clean tree to `origin/feat/ziro-stage-3`**
