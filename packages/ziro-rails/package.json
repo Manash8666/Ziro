@@ -1,0 +1,40 @@
+{
+  "name": "@ziro/rails",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tenancy": {
+      "types": "./dist/tenancy/index.d.ts",
+      "import": "./dist/tenancy/index.js"
+    },
+    "./providers": {
+      "types": "./dist/providers/index.d.ts",
+      "import": "./dist/providers/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@medusajs/framework": "^2.23.0",
+    "@medusajs/types": "^2.23.0",
+    "@medusajs/utils": "^2.23.0",
+    "@ziro/shared-types": "workspace:*",
+    "razorpay": "^2.9.8",
+    "stripe": "^23.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2",
+    "vitest": "^5.1.1"
+  }
+}
