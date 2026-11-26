@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.config import Settings
 from app.db import InMemoryPulseRepository, PgVectorPulseRepository, PulseRepository
 from app.routers.health import router as health_router
+from app.routers.rto import router as rto_router
 from app.routers.search import router as search_router
 from app.services.embeddings import EmbeddingProvider, build_embedding_provider
 
@@ -26,6 +27,7 @@ def create_app(
 
     app.include_router(health_router)
     app.include_router(search_router)
+    app.include_router(rto_router)
     return app
 
 

@@ -17,3 +17,4 @@ class Settings(BaseSettings):
     kya_jwks_secret: str = "ziro-kya-dev-secret"
     kya_require_signed_jwt: bool = False
     platform_fee_bps: int = 0
+    rto_high_risk_threshold: float = 0.72

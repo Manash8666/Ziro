@@ -26,10 +26,20 @@ class PulseRepository(Protocol):
 
     async def list_catalog(self, tenant_id: str, limit: int = 50) -> list[dict[str, Any]]: ...
 
+    async def save_rto_assessment(
+        self,
+        tenant_id: str,
+        pincode: str,
+        cart_value_inr: int,
+        result: dict[str, Any],
+    ) -> None: ...
+
 
 class InMemoryPulseRepository:
     def __init__(self) -> None:
         self._records: dict[tuple[str, str], dict[str, Any]] = {}
+        self._rto_assessments: list[dict[str, Any]] = []
+        self._agent_audit_logs: list[dict[str, Any]] = []
 
     async def upsert_product_embedding(
         self,
@@ -108,6 +118,22 @@ class InMemoryPulseRepository:
             if rec_tenant == tenant_id
         ]
         return items[:limit]
+
+    async def save_rto_assessment(
+        self,
+        tenant_id: str,
+        pincode: str,
+        cart_value_inr: int,
+        result: dict[str, Any],
+    ) -> None:
+        self._rto_assessments.append(
+            {
+                "tenant_id": tenant_id,
+                "pincode": pincode,
+                "cart_value_inr": cart_value_inr,
+                "result": result,
+            }
+        )
 
 
 class PgVectorPulseRepository:
@@ -206,3 +232,27 @@ class PgVectorPulseRepository:
                 limit,
             )
             return [dict(r) for r in rows]
+
+    async def save_rto_assessment(
+        self,
+        tenant_id: str,
+        pincode: str,
+        cart_value_inr: int,
+        result: dict[str, Any],
+    ) -> None:
+        pool = await self._get_pool()
+        async with pool.acquire() as conn:
+            await conn.execute(
+                """
+                INSERT INTO rto_risk_assessments (
+                    tenant_id, pincode, cart_value_inr, risk_score, risk_tier, recommended_modes
+                )
+                VALUES ($1, $2, $3, $4, $5, $6)
+                """,
+                tenant_id,
+                pincode,
+                cart_value_inr,
+                result.get("risk_score", 0.0),
+                result.get("risk_tier", "LOW"),
+                result.get("recommended_payment_modes", []),
+            )
