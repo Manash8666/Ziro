@@ -19,6 +19,7 @@ export const TenantProvisionRequestSchema = z.object({
   custom_domain: z.string().min(3).max(253).optional(),
 });
 export type TenantProvisionRequest = z.infer<typeof TenantProvisionRequestSchema>;
+export type TenantProvisionRequestInput = z.input<typeof TenantProvisionRequestSchema>;
 
 export const TenantProvisionResponseSchema = z.object({
   tenant_id: z.string().min(1),
