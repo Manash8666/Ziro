@@ -8,6 +8,9 @@ out/
 .medusa/
 .turbo/
 *.tsbuildinfo
+public/sw.js
+public/sw.js.map
+next-env.d.ts
 
 # Environment & secrets
 .env
