@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "@ziro/ui-kit/tokens.css";
+
+body {
+  background-color: var(--ziro-obsidian, #090b0e);
+  color: var(--ziro-alabaster, #f4f6f9);
+}

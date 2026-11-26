@@ -1,0 +1,42 @@
+{
+  "name": "@ziro/storefront",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^7.0.9",
+    "@payloadcms/db-postgres": "^3.94.2",
+    "@payloadcms/next": "^3.94.2",
+    "@payloadcms/richtext-lexical": "^3.94.2",
+    "@ziro/shared-types": "workspace:*",
+    "@ziro/ui-kit": "workspace:*",
+    "gsap": "^3.15.1",
+    "lenis": "^1.3.28",
+    "next": "^16.4.6",
+    "payload": "^3.94.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-hook-form": "^7.92.0",
+    "zod": "^3.25.0",
+    "zustand": "^5.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.3.2",
+    "@types/react-dom": "^19.3.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^5.1.1"
+  }
+}
