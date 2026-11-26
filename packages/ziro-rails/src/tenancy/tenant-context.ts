@@ -197,10 +197,10 @@ export class TenantContextResolver {
 
     if (effectiveMode === 'single') {
       if (provider === 'razorpay') {
-        const key_id = this.env.RAZORPAY_KEY_ID;
-        const api_secret = this.env.RAZORPAY_KEY_SECRET;
+        const key_id = this.env.RAZORPAY_KEY_ID ?? '';
+        const api_secret = this.env.RAZORPAY_KEY_SECRET ?? '';
         const webhook_secret = this.env.RAZORPAY_WEBHOOK_SECRET;
-        if (!key_id || !api_secret) return null;
+        if (!key_id && !api_secret && !webhook_secret) return null;
         return {
           tenant_id: tenantId,
           provider,
@@ -211,9 +211,9 @@ export class TenantContextResolver {
         };
       }
       if (provider === 'stripe') {
-        const api_key = this.env.STRIPE_API_KEY;
+        const api_key = this.env.STRIPE_API_KEY ?? '';
         const webhook_secret = this.env.STRIPE_WEBHOOK_SECRET;
-        if (!api_key) return null;
+        if (!api_key && !webhook_secret) return null;
         return {
           tenant_id: tenantId,
           provider,
