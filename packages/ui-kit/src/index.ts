@@ -26,6 +26,31 @@ export {
   type ZiroButtonSize,
   type ZiroButtonVariant,
 } from './components/ZiroButton.js';
+export {
+  ZiroTable,
+  type ZiroTableProps,
+  type ColumnDef,
+} from './components/ZiroTable.js';
+export {
+  ZiroDrawer,
+  type ZiroDrawerProps,
+} from './components/ZiroDrawer.js';
+export {
+  ZiroModal,
+  type ZiroModalProps,
+} from './components/ZiroModal.js';
+export {
+  ZiroToast,
+  type ZiroToastProps,
+} from './components/ZiroToast.js';
+export {
+  SavingsCalculator,
+  calculateAnnualSavings,
+  type SavingsCalculatorProps,
+  type AnnualSavingsInput,
+  type AnnualSavingsResult,
+} from './components/SavingsCalculator.js';
 
 export * from './graphics/index.js';
+
 
