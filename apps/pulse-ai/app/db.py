@@ -40,6 +40,7 @@ class InMemoryPulseRepository:
         self._records: dict[tuple[str, str], dict[str, Any]] = {}
         self._rto_assessments: list[dict[str, Any]] = []
         self._agent_audit_logs: list[dict[str, Any]] = []
+        self._acp_sessions: dict[str, dict[str, Any]] = {}
 
     async def upsert_product_embedding(
         self,
@@ -134,6 +135,43 @@ class InMemoryPulseRepository:
                 "result": result,
             }
         )
+
+    async def save_agent_audit_log(
+        self,
+        tenant_id: str,
+        agent_id: str,
+        action: str,
+        decision: str,
+        details: dict[str, Any],
+    ) -> None:
+        self._agent_audit_logs.append(
+            {
+                "tenant_id": tenant_id,
+                "agent_id": agent_id,
+                "action": action,
+                "decision": decision,
+                "details": details,
+            }
+        )
+
+    async def save_acp_session(self, session: dict[str, Any]) -> None:
+        self._acp_sessions[session["checkout_session_id"]] = dict(session)
+
+    async def get_acp_session(self, session_id: str) -> dict[str, Any] | None:
+        rec = self._acp_sessions.get(session_id)
+        return dict(rec) if rec else None
+
+    async def update_acp_session_status(
+        self,
+        session_id: str,
+        status: str,
+        external_order_id: str | None = None,
+    ) -> None:
+        rec = self._acp_sessions.get(session_id)
+        if rec:
+            rec["status"] = status
+            if external_order_id is not None:
+                rec["external_order_id"] = external_order_id
 
 
 class PgVectorPulseRepository:
