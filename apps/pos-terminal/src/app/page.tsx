@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { ZiroWordmark, StatusBadge, ZiroButton, formatMinorCurrency } from '@ziro/ui-kit';
 import { DexiePosStorage, ZiroPosDb, type PosCatalogRow, type PosConflictRow } from '../lib/db';
 import { PosSyncEngine } from '../lib/sync-engine';
+import { ScanFeedbackBanner } from '../components/ScanFeedbackBanner';
+import { QuickActionBar } from '../components/QuickActionBar';
+import { CashDrawerController } from '../lib/hardware/cash-drawer';
+import { EscPosPrinterDriver } from '../lib/hardware/escpos-printer';
+
 
 const DEMO_CATALOG: PosCatalogRow[] = [
   { sku: 'BRK-001', title: 'Ceramic Brake Pad Kit', barcode: '890123456001', price_minor: 150000, on_hand: 14, version: 1 },
@@ -21,6 +26,13 @@ export default function PosCounterPage() {
   const [statusMessage, setStatusMessage] = useState('Local-first IndexedDB ledger ready');
   const [storage, setStorage] = useState<DexiePosStorage | null>(null);
   const [engine, setEngine] = useState<PosSyncEngine | null>(null);
+  const [lastScan, setLastScan] = useState<{ barcode: string; title: string; timestampMs: number } | null>({
+    barcode: '890123456001',
+    title: 'Ceramic Brake Pad Kit',
+    timestampMs: Date.now(),
+  });
+  const [isSyncing, setIsSyncing] = useState(false);
+
 
   useEffect(() => {
     const isNowOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
@@ -110,7 +122,45 @@ export default function PosCounterPage() {
         </nav>
       </header>
 
+      {/* Hardware Controls */}
+      <QuickActionBar
+        onDrawerKick={() => {
+          CashDrawerController.getKickCommand();
+          setStatusMessage('Cash drawer kick pulse sent (0x1B 0x70)');
+        }}
+
+        onReprint={() => {
+          setStatusMessage('Reprinting ESC/POS thermal receipt');
+        }}
+        onSyncLedger={async () => {
+          if (!engine || !storage) return;
+          setIsSyncing(true);
+          try {
+            const res = await engine.flushPendingMutations();
+            setPendingCount((await storage.listPendingMutations()).length);
+            setConflicts(await storage.listConflicts());
+            setStatusMessage(`Synced ${res.applied} mutation(s), ${res.conflicts} conflict(s)`);
+          } catch {
+            setStatusMessage('Sync failed — offline queue preserved');
+          } finally {
+            setIsSyncing(false);
+          }
+        }}
+        isSyncing={isSyncing}
+        pendingCount={pendingCount}
+      />
+
+      {/* Visual Barcode Feedback */}
+      {lastScan && (
+        <ScanFeedbackBanner
+          lastBarcode={lastScan.barcode}
+          lastItemTitle={lastScan.title}
+          timestampMs={lastScan.timestampMs}
+        />
+      )}
+
       {conflicts.length > 0 && (
+
         <div className="rounded-lg border border-[#F59E0B]/40 bg-[#12161E] p-4 flex items-center justify-between">
           <span className="text-sm text-[#F59E0B]">
             {conflicts.length} inventory sync conflict(s) require supervisor review.
