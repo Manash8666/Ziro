@@ -39,11 +39,11 @@
   - `BarcodeScannerScanEventSchema`
   - `AgentTelemetryMetricSchema`
 
-- [ ] **Step 1: Write failing schema tests in `packages/shared-types/src/__tests__/stage2.test.ts`**
-- [ ] **Step 2: Run test to verify it fails (`pnpm --filter @ziro/shared-types test`)**
-- [ ] **Step 3: Implement Zod schemas in `packages/shared-types/src/schemas/stage2.ts` and export from index**
-- [ ] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/shared-types test && pnpm --filter @ziro/shared-types build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing schema tests in `packages/shared-types/src/__tests__/stage2.test.ts`**
+- [x] **Step 2: Run test to verify it fails (`pnpm --filter @ziro/shared-types test`)**
+- [x] **Step 3: Implement Zod schemas in `packages/shared-types/src/schemas/stage2.ts` and export from index**
+- [x] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/shared-types test && pnpm --filter @ziro/shared-types build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -59,11 +59,11 @@
   - `ValkeyCartLockManager` (supports atomic `acquireLock(tenantId, cartId, items, ttlMs)` and `releaseLock`, with deterministic `InMemoryLockStore` and Valkey/Redis adapter)
   - `seedRealisticCatalog()` generating 100+ automotive SKUs with valid HSN, GST rates, fitments, and BOM kits.
 
-- [ ] **Step 1: Write failing cart lock tests in `packages/ziro-rails/src/__tests__/cart-lock.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement `ValkeyCartLockManager` and `catalog-seed.ts`**
-- [ ] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/rails test && pnpm --filter @ziro/rails build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing cart lock tests in `packages/ziro-rails/src/__tests__/cart-lock.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement `ValkeyCartLockManager` and `catalog-seed.ts`**
+- [x] **Step 4: Verify tests pass and build package (`pnpm --filter @ziro/rails test && pnpm --filter @ziro/rails build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -82,11 +82,11 @@
   - `HardwareBarcodeScannerListener` (filters key events with 25ms threshold buffer to cleanly capture hardware barcode inputs without keyboard interference)
   - `CashDrawerController` (generates drawer kick pulse `0x1B, 0x70, 0x00, 0x19, 0xFA`)
 
-- [ ] **Step 1: Write failing hardware tests in `apps/pos-terminal/src/__tests__/hardware.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement ESC/POS generator, barcode scanner listener, and drawer kicker**
-- [ ] **Step 4: Verify tests pass (`pnpm --filter @ziro/pos test`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing hardware tests in `apps/pos-terminal/src/__tests__/hardware.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement ESC/POS generator, barcode scanner listener, and drawer kicker**
+- [x] **Step 4: Verify tests pass (`pnpm --filter @ziro/pos test`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -108,11 +108,11 @@
   - Self-service tenant provisioning with zero-GMV tax tier billing
   - Caddy reverse proxy config with automated SSL certificates
 
-- [ ] **Step 1: Write failing portal tests in `apps/cloud-portal/src/__tests__/portal.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement Cloud Portal routes, provisioner, billing manager, and Caddyfile**
-- [ ] **Step 4: Verify tests pass and run Next.js build (`pnpm --filter @ziro/cloud-portal test && pnpm --filter @ziro/cloud-portal build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing portal tests in `apps/cloud-portal/src/__tests__/portal.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement Cloud Portal routes, provisioner, billing manager, and Caddyfile**
+- [x] **Step 4: Verify tests pass and run Next.js build (`pnpm --filter @ziro/cloud-portal test && pnpm --filter @ziro/cloud-portal build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -131,11 +131,11 @@
   - Admin endpoints for visual BOM assembly, vehicle fitment CSV import, and B2B credit approval
   - Pulse AI telemetry router (`/v1/telemetry/agent-activity`) exposing real-time KYA agent activity, margin protection triggers, and conversion counts
 
-- [ ] **Step 1: Write failing admin routes test and pytest telemetry test**
-- [ ] **Step 2: Run tests to verify they fail**
-- [ ] **Step 3: Implement admin endpoints in Medusa v2 and telemetry router in Pulse AI**
-- [ ] **Step 4: Verify tests pass (`pnpm --filter @ziro/core test` and `pytest apps/pulse-ai/tests/test_telemetry.py`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing admin routes test and pytest telemetry test**
+- [x] **Step 2: Run tests to verify they fail**
+- [x] **Step 3: Implement admin endpoints in Medusa v2 and telemetry router in Pulse AI**
+- [x] **Step 4: Verify tests pass (`pnpm --filter @ziro/core test` and `pytest apps/pulse-ai/tests/test_telemetry.py`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
@@ -154,18 +154,18 @@
   - Reusable Payload CMS editorial blocks (Hero Slider, Vehicle Fitment selector, 3D Configurator showcase)
   - Logistics client checking live courier rates and e-Way bill consignment thresholds
 
-- [ ] **Step 1: Write failing blocks & logistics client tests in `apps/storefront/src/__tests__/blocks.test.ts`**
-- [ ] **Step 2: Run test to verify it fails**
-- [ ] **Step 3: Implement visual blocks and logistics client**
-- [ ] **Step 4: Verify tests pass and run Next.js build (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront build`)**
-- [ ] **Step 5: Commit and push**
+- [x] **Step 1: Write failing blocks & logistics client tests in `apps/storefront/src/__tests__/blocks.test.ts`**
+- [x] **Step 2: Run test to verify it fails**
+- [x] **Step 3: Implement visual blocks and logistics client**
+- [x] **Step 4: Verify tests pass and run Next.js build (`pnpm --filter @ziro/storefront test && pnpm --filter @ziro/storefront build`)**
+- [x] **Step 5: Commit and push**
 
 ---
 
 ### Task 7: Full Monorepo Stage 2 Verification & Push
 
-- [ ] **Step 1: Run complete typecheck across all workspaces (`pnpm typecheck`)**
-- [ ] **Step 2: Run complete production build across all workspaces (`pnpm build`)**
-- [ ] **Step 3: Run all Vitest and Pytest test suites (`pnpm test` and `pytest apps/pulse-ai/tests -v`)**
-- [ ] **Step 4: Run license audit (`pnpm licenses list`)**
-- [ ] **Step 5: Commit and push clean tree to `origin/feat/ziro-stage-2`**
+- [x] **Step 1: Run complete typecheck across all workspaces (`pnpm typecheck`)**
+- [x] **Step 2: Run complete production build across all workspaces (`pnpm build`)**
+- [x] **Step 3: Run all Vitest and Pytest test suites (`pnpm test` and `pytest apps/pulse-ai/tests -v`)**
+- [x] **Step 4: Run license audit (`pnpm licenses list`)**
+- [x] **Step 5: Commit and push clean tree to `origin/feat/ziro-stage-2`**
