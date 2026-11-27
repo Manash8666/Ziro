@@ -50,6 +50,10 @@ export {
   type AnnualSavingsInput,
   type AnnualSavingsResult,
 } from './components/SavingsCalculator.js';
+export {
+  ZiroNavigationHeader,
+  type ZiroNavigationHeaderProps,
+} from './components/ZiroNavigationHeader.js';
 
 export * from './graphics/index.js';
 

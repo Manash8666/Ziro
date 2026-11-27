@@ -32,18 +32,18 @@ The entire platform lives inside a single **Turborepo** workspace so storefronts
 ziro-commerce-os/
 ├── apps/
 │   ├── storefront/          # Next.js 16 App Router + Tailwind v4 + Three.js 3D + Semantic Fitment Search
-│   ├── pos-terminal/        # Offline-first Serwist PWA + Dexie IndexedDB + ESC/POS thermal printing
-│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Automated Billing, Onboarding, Dashboard & TLS
-│   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + PostgreSQL 17 RLS + Admin BOM/Fitment Studio
-│   └── pulse-ai/            # Ziro Pulse (FastAPI: 1024-dim BAAI/bge-m3 pgvector, AI COD-RTO Shield, UCP/ACP)
+│   ├── pos-terminal/        # Offline-first Serwist PWA + Dexie IndexedDB + Sub-30ms HID Scanner + ESC/POS WebSerial
+│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Shopify Polaris Admin Shell + Automated Billing
+│   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + PostgreSQL 17 RLS + POS Sync & Double-Entry Accounting
+│   └── pulse-ai/            # Ziro Pulse (FastAPI: 1024-dim BAAI/bge-m3 pgvector, TimescaleDB Telemetry, UCP/ACP)
 ├── packages/
 │   ├── migrator/            # 1-Click Shopify CSV & WooCommerce REST catalog importer with HSN/GST inference
 │   ├── shared-types/        # Shared Zod schemas, TypeScript interfaces, GST 38+1 & DDP calculators
-│   ├── ui-kit/              # Dark Precision design tokens, Programmatic SVGs, ZiroTable, ZiroDrawer, 3D
+│   ├── ui-kit/              # Dark Precision design tokens, Programmatic SVGs, ZiroNavigationHeader, 3D Studio
 │   └── ziro-rails/          # Multi-tenant resolver, Valkey cart locks, Razorpay, Stripe, ONDC adapters
 ├── docker/
 │   ├── caddy/Caddyfile      # Hardened On-Demand TLS with shared secret gate & strict security headers
-│   ├── postgres/            # PostgreSQL 17 RLS policies, vector tables & Stage 5 SaaS billing lifecycle (`01`-`06`)
+│   ├── postgres/            # PostgreSQL 17 RLS policies, vector tables & Stage 5 migrations (01 through 08)
 │   ├── Dockerfile.engine    # Multi-stage production container for Commerce Engine
 │   ├── Dockerfile.pulse     # Multi-stage container for Python 3.12 FastAPI Pulse AI
 │   ├── Dockerfile.web       # Multi-stage container for Next.js 16 web applications
@@ -96,7 +96,8 @@ pnpm dev
 
 - **Storefront:** [http://localhost:3000](http://localhost:3000)
 - **POS Terminal:** [http://localhost:3001](http://localhost:3001)
-- **Cloud Portal:** [http://localhost:3002](http://localhost:3002)
+- **Merchant Admin Shell:** [http://localhost:3002/admin](http://localhost:3002/admin)
+- **SaaS Billing Portal:** [http://localhost:3002/billing](http://localhost:3002/billing)
 - **Commerce Engine (Medusa v2):** [http://localhost:9000](http://localhost:9000)
 - **Pulse AI Service:** [http://localhost:8000](http://localhost:8000)
 
@@ -107,10 +108,10 @@ pnpm dev
 Ziro enforces test-driven development (TDD) across all packages with isolated unit and integration suites:
 
 ```bash
-# Run all TypeScript / React test suites (160 tests across 36 files)
+# Run all TypeScript / React test suites (172+ tests across 37 files)
 pnpm test
 
-# Run Python AI test suite (14 tests: 1024-dim BAAI/bge-m3 embeddings, RTO, KYA, UCP, ACP)
+# Run Python AI test suite (17 tests: TimescaleDB Telemetry, 1024-dim BAAI/bge-m3 embeddings, RTO, KYA, UCP, ACP)
 python -m pytest apps/pulse-ai/tests -v
 
 # Run Hardware-in-the-Loop & Signed Webhook Verification (9/9 assertions)

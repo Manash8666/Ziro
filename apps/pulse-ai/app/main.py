@@ -1,3 +1,4 @@
+from typing import Any
 from fastapi import FastAPI
 from app.config import Settings
 from app.db import InMemoryPulseRepository, PgVectorPulseRepository, PulseRepository
@@ -23,11 +24,13 @@ def create_app(
     embedding_provider: EmbeddingProvider | None = None,
     commerce_client: CommerceBackendClient | None = None,
     bge_m3_service: BgeM3EmbeddingService | None = None,
+    db_pool: Any | None = None,
 ) -> FastAPI:
     cfg = settings or Settings()
     app = FastAPI(title="Ziro Pulse AI", version="0.1.0")
 
     app.state.settings = cfg
+    app.state.db_pool = db_pool
     if repository is not None:
         app.state.repository = repository
         default_commerce: CommerceBackendClient = InMemoryCommerceClient()

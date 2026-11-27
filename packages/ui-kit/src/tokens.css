@@ -1,10 +1,14 @@
 @theme {
+  --color-ziro-void: #080A0D;
   --color-ziro-obsidian: #090B0E;
+  --color-ziro-surface: #12161E;
+  --color-ziro-surface-hover: #1A202C;
   --color-ziro-slate: #12161E;
   --color-ziro-border: #1F2633;
   --color-ziro-border-hover: #2E384D;
   --color-ziro-mint: #00E599;
   --color-ziro-amber: #F59E0B;
+  --color-ziro-gold: #E6B800;
   --color-ziro-alabaster: #F4F6F9;
   --color-ziro-muted: #8B95A5;
   --color-ziro-danger: #EF4444;
@@ -15,18 +19,23 @@
   --border-hairline: #1F2633;
   --border-glow-mint: rgba(0, 229, 153, 0.25);
   --border-glow-amber: rgba(245, 158, 11, 0.25);
+  --border-glow-gold: rgba(230, 184, 0, 0.25);
 
   --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
 :root {
+  --color-ziro-void: #080A0D;
   --color-ziro-obsidian: #090B0E;
+  --color-ziro-surface: #12161E;
+  --color-ziro-surface-hover: #1A202C;
   --color-ziro-slate: #12161E;
   --color-ziro-border: #1F2633;
   --color-ziro-border-hover: #2E384D;
   --color-ziro-mint: #00E599;
   --color-ziro-amber: #F59E0B;
+  --color-ziro-gold: #E6B800;
   --color-ziro-alabaster: #F4F6F9;
   --color-ziro-muted: #8B95A5;
   --color-ziro-danger: #EF4444;
@@ -37,6 +46,7 @@
   --border-hairline: #1F2633;
   --border-glow-mint: rgba(0, 229, 153, 0.25);
   --border-glow-amber: rgba(245, 158, 11, 0.25);
+  --border-glow-gold: rgba(230, 184, 0, 0.25);
 
   --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
@@ -56,6 +66,10 @@
 
 .ziro-glow-mint {
   box-shadow: 0 0 24px -4px var(--border-glow-mint, rgba(0, 229, 153, 0.25));
+}
+
+.ziro-glow-gold {
+  box-shadow: 0 0 24px -4px var(--border-glow-gold, rgba(230, 184, 0, 0.25));
 }
 
 .ziro-focus-ring:focus-visible {

@@ -1,7 +1,48 @@
 @import "tailwindcss";
 @import "@ziro/ui-kit/tokens.css";
 
+:root {
+  --ziro-obsidian: #080A0D;
+  --ziro-surface: #12161E;
+  --ziro-surface-hover: #1A202C;
+  --ziro-border: #1F2633;
+  --ziro-mint: #00E599;
+  --ziro-amber: #F59E0B;
+  --ziro-gold: #E6B800;
+  --ziro-alabaster: #F4F6F9;
+  --ziro-muted: #8B95A5;
+}
+
 body {
-  background-color: var(--ziro-obsidian, #090b0e);
-  color: var(--ziro-alabaster, #f4f6f9);
+  background-color: var(--ziro-obsidian);
+  color: var(--ziro-alabaster);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Touch-optimized cashiering targets */
+.pos-touch-btn {
+  min-height: 48px;
+  touch-action: manipulation;
+  active:scale-95;
+  transition: transform 0.05s ease-out, background-color 0.15s ease-out;
+}
+
+.pos-ticket-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #1F2633 transparent;
+}
+
+.pos-ticket-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.pos-ticket-scroll::-webkit-scrollbar-thumb {
+  background-color: #1F2633;
+  border-radius: 4px;
 }
