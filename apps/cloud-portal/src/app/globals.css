@@ -5,3 +5,8 @@ body {
   background-color: var(--ziro-obsidian, #090b0e);
   color: var(--ziro-alabaster, #f4f6f9);
 }
+
+html.is-embedded nav,
+body.is-embedded nav {
+  display: none !important;
+}

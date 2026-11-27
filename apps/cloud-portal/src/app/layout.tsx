@@ -27,6 +27,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(window.self!==window.top){document.documentElement.classList.add('is-embedded');}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-[#090B0E] text-[#F4F6F9] antialiased">
         <nav className="border-b border-[#1F2633] bg-[#090B0E]/95 backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-8">
