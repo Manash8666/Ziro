@@ -11,6 +11,7 @@ import {
 } from '@ziro/rails';
 import { PosSyncService, type CatalogItemState } from './pos-sync.service.js';
 import { CatalogIndexService, type MeilisearchIndexLike } from './catalog-index.service.js';
+import { ProductMigrationUpsertService } from './product-migration-upsert.js';
 
 export interface EngineRequest {
   headers: Record<string, string | string[] | undefined>;
@@ -55,6 +56,7 @@ export interface EngineContainer {
   webhookEventStore: InMemoryWebhookEventStore;
   posSyncService: PosSyncService;
   catalogIndexService: CatalogIndexService;
+  migrationUpsertService: ProductMigrationUpsertService;
   ondcAdapter?: OndcSellerAdapter;
   internalSecret: string;
   acpReservations: Map<string, AcpReservationRecord>;
@@ -73,6 +75,7 @@ export function createEngineContainer(options?: {
   fetchImpl?: typeof fetch;
   internalSecret?: string;
   initialCatalog?: CatalogItemState[];
+  migrationUpsertService?: ProductMigrationUpsertService;
 }): EngineContainer {
   const tenantResolver = options?.tenantResolver ?? new TenantContextResolver({ defaultMode: 'single' });
   const bomStore = options?.bomStore ?? new InMemoryFitmentBomStore();
@@ -103,6 +106,7 @@ export function createEngineContainer(options?: {
       meilisearchIndex: options?.meilisearchIndex,
       fetchImpl: options?.fetchImpl,
     }),
+    migrationUpsertService: options?.migrationUpsertService ?? new ProductMigrationUpsertService(),
     ondcAdapter: options?.ondcAdapter,
     internalSecret:
       options?.internalSecret ?? process.env.ZIRO_INTERNAL_SECRET ?? 'ziro-internal-dev-secret',

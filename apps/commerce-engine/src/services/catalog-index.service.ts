@@ -67,4 +67,57 @@ export class CatalogIndexService {
       }),
     });
   }
+
+  async upsertProduct(
+    tenantId: string,
+    product: {
+      id: string;
+      title: string;
+      description?: string;
+      category?: string;
+      hsn?: string;
+      gst_slab?: number;
+      variants: Array<{
+        sku: string;
+        title: string;
+        price_minor: number;
+        stock: number;
+      }>;
+    }
+  ): Promise<void> {
+    if (this.meiliIndex) {
+      const docs = product.variants.map((v) => ({
+        id: `${tenantId}_${product.id}_${v.sku}`,
+        tenant_id: tenantId,
+        product_id: product.id,
+        title: `${product.title} - ${v.title}`,
+        description: product.description ?? '',
+        sku: v.sku,
+        category: product.category,
+        hsn: product.hsn,
+        gst_slab: product.gst_slab,
+        price_minor: v.price_minor,
+        currency: 'INR',
+        stock_qty: v.stock,
+      }));
+      await this.meiliIndex.addDocuments(docs);
+    }
+
+    await this.fetchImpl(`${this.pulseUrl}/v1/embeddings/index`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tenant_id: tenantId,
+        items: product.variants.map((v) => ({
+          product_id: product.id,
+          title: `${product.title} - ${v.title}`,
+          description: product.description ?? '',
+          sku: v.sku,
+          price_minor: v.price_minor,
+          currency: 'INR',
+          stock_qty: v.stock,
+        })),
+      }),
+    }).catch(() => {});
+  }
 }

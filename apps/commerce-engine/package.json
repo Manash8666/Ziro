@@ -20,6 +20,7 @@
   "dependencies": {
     "@medusajs/framework": "^2.23.0",
     "@medusajs/medusa": "^2.23.0",
+    "@ziro/migrator": "workspace:*",
     "@ziro/rails": "workspace:*",
     "@ziro/shared-types": "workspace:*",
     "meilisearch": "^0.63.0"
