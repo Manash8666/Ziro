@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "engines": {
     "node": ">=22.22.0"
   },
@@ -12,7 +13,8 @@
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "verify:hil": "node --experimental-strip-types scripts/verify-webhooks-and-hil.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
