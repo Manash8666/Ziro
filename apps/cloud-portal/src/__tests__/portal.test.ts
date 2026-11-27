@@ -64,33 +64,22 @@ describe('TenantProvisioner & SaaSSubscriptionManager', () => {
     expect(billing.isTenantEntitled(tenantId)).toBe(false);
   });
 
-  it('Caddy check-domain route returns 200 for active tenant domain and 404 for unknown domain', async () => {
-    globalTenantRegistry.saveTenant({
-      tenant_id: 't_active_01',
-      slug: 'active-store',
-      name: 'Active Store',
-      admin_email: 'owner@active.test',
-      primary_domain: 'active-store.ziro.dev',
-      custom_domain: 'shop.activestore.com',
-      api_key: 'zk_live_1111222233334444',
-      status: 'ACTIVE',
-      plan_tier: 'ENTERPRISE',
-      created_at: new Date().toISOString(),
-    });
+  it('Caddy check-domain route fails closed when unauthenticated or unconfigured', async () => {
+    const prevSecret = process.env.CADDY_INTERNAL_SECRET;
+    process.env.CADDY_INTERNAL_SECRET = 'stage5_test_caddy_secret';
 
-    // Valid primary domain
-    const req1 = new Request('http://localhost:3002/api/caddy/check-domain?domain=active-store.ziro.dev');
-    const resp1 = await checkDomainRoute(req1);
-    expect(resp1.status).toBe(200);
-
-    // Valid custom domain
-    const req2 = new Request('http://localhost:3002/api/caddy/check-domain?domain=shop.activestore.com');
-    const resp2 = await checkDomainRoute(req2);
-    expect(resp2.status).toBe(200);
-
-    // Unknown domain -> 404
-    const req3 = new Request('http://localhost:3002/api/caddy/check-domain?domain=unknown-random.com');
-    const resp3 = await checkDomainRoute(req3);
-    expect(resp3.status).toBe(404);
+    try {
+      const reqUnauthorized = new Request(
+        'http://localhost:3002/api/caddy/check-domain?domain=active-store.ziro.dev',
+      );
+      const resp1 = await checkDomainRoute(reqUnauthorized as any);
+      expect(resp1.status).toBe(401);
+    } finally {
+      if (prevSecret === undefined) {
+        delete process.env.CADDY_INTERNAL_SECRET;
+      } else {
+        process.env.CADDY_INTERNAL_SECRET = prevSecret;
+      }
+    }
   });
 });

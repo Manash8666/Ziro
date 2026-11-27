@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import {
   ZiroWordmark,
   ZiroButton,
@@ -26,9 +27,13 @@ export default function CloudPortalHome() {
         <p style={{ fontSize: 20, color: '#8B95A5', maxWidth: 740, margin: '0 auto 32px auto', lineHeight: 1.6 }}>
           One unified multi-tenant ledger for your online storefront, B2B wholesale portal, counter POS, and AI shopping agents—with flat-fee pricing and 0% GMV fees.
         </p>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-          <ZiroButton variant="primary" size="lg">Deploy Store in 60s</ZiroButton>
-          <ZiroButton variant="secondary" size="lg">Explore Docs</ZiroButton>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link href="/onboarding">
+            <ZiroButton variant="primary" size="lg">Deploy Store in 60s</ZiroButton>
+          </Link>
+          <Link href="/docs">
+            <ZiroButton variant="secondary" size="lg">Explore Docs</ZiroButton>
+          </Link>
         </div>
       </section>
 
@@ -89,9 +94,11 @@ export default function CloudPortalHome() {
                 </ul>
               </div>
               <div>
-                <ZiroButton variant={plan.tier === 'GROWTH' ? 'primary' : 'secondary'} className="w-full">
-                  Select {plan.tier}
-                </ZiroButton>
+                <Link href={`/onboarding?plan=${plan.tier === 'ENTERPRISE' ? 'scale' : plan.tier.toLowerCase()}`}>
+                  <ZiroButton variant={plan.tier === 'GROWTH' ? 'primary' : 'secondary'} className="w-full">
+                    Select {plan.tier}
+                  </ZiroButton>
+                </Link>
               </div>
             </div>
           ))}

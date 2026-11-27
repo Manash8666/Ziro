@@ -33,7 +33,7 @@ ziro-commerce-os/
 ├── apps/
 │   ├── storefront/          # Next.js 16 App Router + Tailwind v4 + Three.js 3D + Semantic Fitment Search
 │   ├── pos-terminal/        # Offline-first Serwist PWA + Dexie IndexedDB + ESC/POS thermal printing
-│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Caddy On-Demand TLS + 1-Click Migration
+│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Automated Billing, Onboarding, Dashboard & TLS
 │   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + PostgreSQL 17 RLS + Admin BOM/Fitment Studio
 │   └── pulse-ai/            # Ziro Pulse (FastAPI: 1024-dim BAAI/bge-m3 pgvector, AI COD-RTO Shield, UCP/ACP)
 ├── packages/
@@ -43,7 +43,7 @@ ziro-commerce-os/
 │   └── ziro-rails/          # Multi-tenant resolver, Valkey cart locks, Razorpay, Stripe, ONDC adapters
 ├── docker/
 │   ├── caddy/Caddyfile      # Hardened On-Demand TLS with shared secret gate & strict security headers
-│   ├── postgres/            # PostgreSQL 17 Row-Level Security (RLS) policies & vector tables
+│   ├── postgres/            # PostgreSQL 17 RLS policies, vector tables & Stage 5 SaaS billing lifecycle (`01`-`06`)
 │   ├── Dockerfile.engine    # Multi-stage production container for Commerce Engine
 │   ├── Dockerfile.pulse     # Multi-stage container for Python 3.12 FastAPI Pulse AI
 │   ├── Dockerfile.web       # Multi-stage container for Next.js 16 web applications
@@ -107,7 +107,7 @@ pnpm dev
 Ziro enforces test-driven development (TDD) across all packages with isolated unit and integration suites:
 
 ```bash
-# Run all TypeScript / React test suites (132 tests across 28 files)
+# Run all TypeScript / React test suites (160 tests across 36 files)
 pnpm test
 
 # Run Python AI test suite (14 tests: 1024-dim BAAI/bge-m3 embeddings, RTO, KYA, UCP, ACP)

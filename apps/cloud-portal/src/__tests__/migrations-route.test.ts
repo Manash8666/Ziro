@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { GET as checkDomainGet } from '../app/api/caddy/check-domain/route.js';
+import { GET as checkDomainGet, handleCaddyCheckDomain } from '../app/api/caddy/check-domain/route.js';
 import { POST as migrationsPost } from '../app/api/v1/migrations/route.js';
-import { globalTenantRegistry } from '../lib/tenant-provisioner.js';
+import type { DbPoolLike, SqlClientLike } from '../lib/billing-lifecycle-service.js';
 
 describe('Cloud Portal Migrations & Caddy Secret API', () => {
   beforeEach(() => {
@@ -29,27 +29,35 @@ describe('Cloud Portal Migrations & Caddy Secret API', () => {
     it('allows check-domain request when secret matches and tenant is active', async () => {
       process.env.CADDY_INTERNAL_SECRET = 'caddy_secret_token_abc';
 
-      // Register an active tenant
-      globalTenantRegistry.saveTenant({
-        tenant_id: 'tenant_valid_1',
-        slug: 'valid-merchant',
-        name: 'Valid Merchant',
-        admin_email: 'admin@valid.com',
-        primary_domain: 'active-merchant.example.com',
-        api_key: 'key_123',
-        status: 'ACTIVE',
-        plan_tier: 'GROWTH',
-        created_at: new Date().toISOString(),
-      });
+      const mockDb: DbPoolLike = {
+        connect: async () => ({
+          release: vi.fn(),
+          query: vi.fn(async () => ({
+            rows: [
+              {
+                tenant_id: 'tenant_valid_1',
+                slug: 'valid-merchant',
+                custom_domain: 'active-merchant.example.com',
+                plan_tier: 'growth',
+                billing_status: 'active',
+                grace_period_ends_at: null,
+                is_demo_sandbox: false,
+                platform_fee_bps: 0,
+              },
+            ],
+            rowCount: 1,
+          })) as unknown as SqlClientLike['query'],
+        }),
+      };
 
       const req = new Request(
         'http://localhost:3002/api/caddy/check-domain?domain=active-merchant.example.com&secret=caddy_secret_token_abc'
       );
-      const res = await checkDomainGet(req);
+      const res = await handleCaddyCheckDomain(req, { db: mockDb });
       expect(res.status).toBe(200);
       const json = await res.json();
       expect(json.allowed).toBe(true);
-      expect(json.tenant_id).toBe('tenant_valid_1');
+      expect(json.tenantId).toBe('tenant_valid_1');
 
       delete process.env.CADDY_INTERNAL_SECRET;
     });

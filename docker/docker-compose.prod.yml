@@ -24,6 +24,7 @@ services:
       - ./postgres/03-migration-tables-rls.sql:/docker-entrypoint-initdb.d/003-migration-tables-rls.sql:ro
       - ./postgres/04-pulse-embeddings-rls.sql:/docker-entrypoint-initdb.d/004-pulse-embeddings-rls.sql:ro
       - ./postgres/05-sandbox-invariants-rls.sql:/docker-entrypoint-initdb.d/005-sandbox-invariants-rls.sql:ro
+      - ./postgres/06-saas-billing-lifecycle.sql:/docker-entrypoint-initdb.d/006-saas-billing-lifecycle.sql:ro
     networks:
       - ziro_data
     healthcheck:
@@ -158,7 +159,20 @@ services:
       PULSE_AI_URL: http://pulse-ai:8000
       CADDY_INTERNAL_SECRET: ${CADDY_INTERNAL_SECRET:?CADDY_INTERNAL_SECRET is required}
       ZIRO_INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN}
+      CRON_SECRET: ${CRON_SECRET:-}
+      ZIRO_ROOT_DOMAIN: ${ZIRO_ROOT_DOMAIN:-ziro.build}
       ZIRO_PLATFORM_FEE_BPS: 0
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      RAZORPAY_PLAN_STARTER: ${RAZORPAY_PLAN_STARTER:-}
+      RAZORPAY_PLAN_GROWTH: ${RAZORPAY_PLAN_GROWTH:-}
+      RAZORPAY_PLAN_SCALE: ${RAZORPAY_PLAN_SCALE:-}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      STRIPE_PRICE_STARTER: ${STRIPE_PRICE_STARTER:-}
+      STRIPE_PRICE_GROWTH: ${STRIPE_PRICE_GROWTH:-}
+      STRIPE_PRICE_SCALE: ${STRIPE_PRICE_SCALE:-}
     depends_on:
       postgres:
         condition: service_healthy
@@ -245,7 +259,7 @@ services:
       - "443:443"
     environment:
       CADDY_INTERNAL_SECRET: ${CADDY_INTERNAL_SECRET}
-      BASE_DOMAIN: ${BASE_DOMAIN:-ziro.build}
+      BASE_DOMAIN: ${ZIRO_ROOT_DOMAIN:-ziro.build}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - ziro_caddy_data:/data
