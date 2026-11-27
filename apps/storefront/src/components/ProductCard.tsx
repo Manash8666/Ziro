@@ -30,48 +30,48 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`flex flex-col justify-between rounded-xl border border-[#1F2633] bg-[#12161E] p-5 hover:border-[#00E599]/50 transition-colors ${className}`}
+      className={`flex flex-col justify-between rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] p-5 hover:border-[var(--ziro-accent-brand,#7A243B)] transition-all shadow-sm ${className}`}
     >
       <div className="space-y-3">
         {/* Category & Status */}
         <div className="flex items-center justify-between text-xs font-mono">
-          <span className="text-[#8B95A5]">{product.category}</span>
-          <span className="text-[#00E599] bg-[#00E599]/10 px-2 py-0.5 rounded">
+          <span className="text-[var(--ziro-text-secondary,#C9A3AC)]">{product.category}</span>
+          <span className="text-[var(--ziro-cta-bg,#E8A5B5)] bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] border border-[var(--ziro-badge-border,#7A243B)] px-2 py-0.5 rounded font-bold">
             In Stock
           </span>
         </div>
 
         {/* Thumbnail Placeholder */}
-        <div className="flex h-40 w-full items-center justify-center rounded-lg border border-[#1F2633] bg-[#090B0E]">
-          <span className="font-mono text-xs text-[#8B95A5]">{product.sku}</span>
+        <div className="flex h-40 w-full items-center justify-center rounded-lg border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)]">
+          <span className="font-mono text-xs text-[var(--ziro-text-secondary,#C9A3AC)]">{product.sku}</span>
         </div>
 
         {/* Title & SKU */}
         <div>
-          <span className="text-[10px] font-mono text-[#8B95A5]">SKU: {product.sku}</span>
-          <h3 className="text-base font-semibold text-[#F4F6F9] line-clamp-2">
+          <span className="text-[10px] font-mono text-[var(--ziro-text-secondary,#C9A3AC)]">SKU: {product.sku}</span>
+          <h3 className="text-base font-semibold text-[var(--ziro-text-primary,#F6DCE2)] line-clamp-2">
             {product.title}
           </h3>
         </div>
 
         {/* Fitment Tag */}
-        <p className="text-xs text-[#8B95A5] bg-[#090B0E] p-2 rounded border border-[#1F2633]/60">
-          <span className="text-[#00E599] font-mono">Fitment:</span> {product.fitmentSummary}
+        <p className="text-xs text-[var(--ziro-text-secondary,#C9A3AC)] bg-[var(--ziro-bg-canvas,#14090D)] p-2 rounded border border-[var(--ziro-border-hairline,#3D1C26)]/60">
+          <span className="text-[var(--ziro-cta-bg,#E8A5B5)] font-mono font-bold">Fitment:</span> {product.fitmentSummary}
         </p>
       </div>
 
-      {/* Price & CTA */}
-      <div className="flex items-center justify-between pt-4 border-t border-[#1F2633] mt-4">
+      {/* Price & Action */}
+      <div className="mt-4 flex items-center justify-between border-t border-[var(--ziro-border-hairline,#3D1C26)] pt-4">
         <div>
-          <span className="block text-[10px] font-mono text-[#8B95A5]">EXCL. GST</span>
-          <span className="text-lg font-bold font-mono text-[#00E599] ziro-tabular">
+          <span className="text-[10px] font-mono uppercase text-[var(--ziro-text-secondary,#C9A3AC)]">Price (Net 0% Tax)</span>
+          <p className="text-lg font-bold font-mono text-[var(--ziro-text-primary,#F6DCE2)] ziro-tabular">
             {priceFormatted}
-          </span>
+          </p>
         </div>
 
-        <Link href={`/products/${product.handle}`}>
-          <ZiroButton variant="secondary" size="sm">
-            View Assembly
+        <Link href={`/product/${product.handle}`}>
+          <ZiroButton variant="primary" size="sm">
+            View BOM ↗
           </ZiroButton>
         </Link>
       </div>

@@ -2,8 +2,9 @@
 @import "@ziro/ui-kit/tokens.css";
 
 body {
-  background-color: var(--ziro-obsidian, #090b0e);
-  color: var(--ziro-alabaster, #f4f6f9);
+  background-color: var(--ziro-bg-canvas, #14090D);
+  color: var(--ziro-text-primary, #F6DCE2);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 html.is-embedded nav,

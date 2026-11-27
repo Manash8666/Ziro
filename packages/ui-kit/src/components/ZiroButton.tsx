@@ -11,24 +11,24 @@ export interface ZiroButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 
 const VARIANT_STYLES: Record<ZiroButtonVariant, CSSProperties> = {
   primary: {
-    backgroundColor: 'var(--color-ziro-mint, #00E599)',
-    color: 'var(--color-ziro-obsidian, #090B0E)',
-    border: '1px solid var(--color-ziro-mint, #00E599)',
+    backgroundColor: 'var(--ziro-cta-bg, var(--color-ziro-mint, #00E599))',
+    color: 'var(--ziro-cta-text, var(--color-ziro-obsidian, #090B0E))',
+    border: '1px solid var(--ziro-cta-bg, var(--color-ziro-mint, #00E599))',
   },
   secondary: {
-    backgroundColor: 'var(--color-ziro-slate, #12161E)',
-    color: 'var(--color-ziro-alabaster, #F4F6F9)',
-    border: '1px solid var(--color-ziro-border, #1F2633)',
+    backgroundColor: 'var(--ziro-bg-card, var(--color-ziro-slate, #12161E))',
+    color: 'var(--ziro-text-primary, var(--color-ziro-alabaster, #F4F6F9))',
+    border: '1px solid var(--ziro-border-hairline, var(--color-ziro-border, #1F2633))',
   },
   amber: {
-    backgroundColor: 'var(--color-ziro-amber, #F59E0B)',
-    color: 'var(--color-ziro-obsidian, #090B0E)',
-    border: '1px solid var(--color-ziro-amber, #F59E0B)',
+    backgroundColor: 'var(--ziro-accent-brand, var(--color-ziro-amber, #F59E0B))',
+    color: 'var(--ziro-cta-text, var(--color-ziro-obsidian, #090B0E))',
+    border: '1px solid var(--ziro-accent-brand, var(--color-ziro-amber, #F59E0B))',
   },
   ghost: {
     backgroundColor: 'transparent',
-    color: 'var(--color-ziro-alabaster, #F4F6F9)',
-    border: '1px solid var(--color-ziro-border, #1F2633)',
+    color: 'var(--ziro-text-primary, var(--color-ziro-alabaster, #F4F6F9))',
+    border: '1px solid var(--ziro-ghost-border, var(--color-ziro-border, #1F2633))',
   },
 };
 

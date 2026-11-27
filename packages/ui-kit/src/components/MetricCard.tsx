@@ -48,11 +48,11 @@ export function MetricCard({
   const deltaStyle = DELTA_STYLES[deltaTone];
 
   const cardStyle: CSSProperties = {
-    backgroundColor: 'var(--color-ziro-slate, #12161E)',
-    border: '1px solid var(--color-ziro-border, #1F2633)',
-    borderRadius: '6px',
+    backgroundColor: 'var(--ziro-bg-card, var(--color-ziro-slate, #12161E))',
+    border: '1px solid var(--ziro-border-hairline, var(--color-ziro-border, #1F2633))',
+    borderRadius: '8px',
     padding: '1rem 1.25rem',
-    color: 'var(--color-ziro-alabaster, #F4F6F9)',
+    color: 'var(--ziro-text-primary, var(--color-ziro-alabaster, #F4F6F9))',
     display: 'flex',
     flexDirection: 'column',
     gap: '0.625rem',
@@ -71,7 +71,7 @@ export function MetricCard({
     fontWeight: 600,
     letterSpacing: '0.08em',
     textTransform: 'uppercase',
-    color: 'var(--color-ziro-muted, #94A3B8)',
+    color: 'var(--ziro-text-secondary, var(--color-ziro-muted, #94A3B8))',
   };
 
   const valueRowStyle: CSSProperties = {
@@ -90,7 +90,7 @@ export function MetricCard({
     fontWeight: 700,
     lineHeight: 1.15,
     fontVariantNumeric: 'tabular-nums',
-    color: 'var(--color-ziro-alabaster, #F4F6F9)',
+    color: 'var(--ziro-text-primary, var(--color-ziro-alabaster, #F4F6F9))',
   };
 
   const pillStyle: CSSProperties = {

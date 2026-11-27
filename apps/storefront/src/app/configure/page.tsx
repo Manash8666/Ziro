@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ZiroWordmark, StatusBadge } from '@ziro/ui-kit';
+import { ZiroWordmark, StatusBadge, ThemeToggle } from '@ziro/ui-kit';
 import { ProductConfigurator3D } from '@ziro/ui-kit/3d';
 import { useCartStore } from '../../store/cart';
 
@@ -9,32 +9,35 @@ export default function ConfigurePage() {
   const addItem = useCartStore((s) => s.addItem);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10 space-y-8">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F2633] pb-4">
+    <main className="min-h-screen bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] mx-auto max-w-7xl px-6 py-10 space-y-8 transition-colors duration-200">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--ziro-border-hairline,#3D1C26)] pb-4">
         <div className="flex items-center gap-4">
           <Link href="/">
             <ZiroWordmark />
           </Link>
           <StatusBadge variant="live-sync" label="Three.js R3F Engine" />
         </div>
-        <nav className="flex items-center gap-6 text-sm">
-          <Link href="/" className="text-[#8B95A5] hover:text-[#F4F6F9]">Home</Link>
-          <Link href="/catalog" className="text-[#8B95A5] hover:text-[#F4F6F9]">Catalog</Link>
-          <Link href="/configure" className="text-[#00E599] font-medium">3D Configurator</Link>
-          <Link href="/checkout" className="text-[#8B95A5] hover:text-[#F4F6F9]">Checkout</Link>
-        </nav>
+        <div className="flex items-center gap-6">
+          <nav className="flex items-center gap-6 text-sm">
+            <Link href="/" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">Home</Link>
+            <Link href="/catalog" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">Catalog</Link>
+            <Link href="/configure" className="text-[var(--ziro-cta-bg,#E8A5B5)] font-semibold">3D Configurator</Link>
+            <Link href="/checkout" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">Checkout</Link>
+          </nav>
+          <ThemeToggle size="sm" />
+        </div>
       </header>
 
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#F4F6F9]">
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--ziro-text-primary,#F6DCE2)]">
             3D Assembly Configurator & BOM Fitment
           </h1>
-          <p className="text-xs text-[#8B95A5] font-mono mt-1">
+          <p className="text-xs text-[var(--ziro-text-secondary,#C9A3AC)] font-mono mt-1">
             Real-time material rendering, dynamic pricing, and direct cart synchronisation.
           </p>
         </div>
-        <span className="text-xs font-mono text-[#00E599] bg-[#00E599]/10 px-3 py-1 rounded">
+        <span className="text-xs font-mono text-[var(--ziro-cta-bg,#E8A5B5)] bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] border border-[var(--ziro-badge-border,#7A243B)] px-3 py-1 rounded font-bold">
           0% Transaction Tax
         </span>
       </div>
@@ -46,7 +49,7 @@ export default function ConfigurePage() {
         currency="INR"
         finishes={[
           { id: 'titanium-slate', label: 'Titanium Slate', swatchHex: '#4B5563', priceDeltaMinor: 0 },
-          { id: 'anodized-mint', label: 'Electric Mint Anodized', swatchHex: '#00E599', priceDeltaMinor: 15000 },
+          { id: 'anodized-mint', label: 'Luminous Blush Anodized', swatchHex: '#E8A5B5', priceDeltaMinor: 15000 },
         ]}
         bomOptions={[
           { id: 'opt_pads', childSku: 'sku_ceramic_pads', label: 'Ceramic Pads', priceDeltaMinor: 25000, defaultSelected: true },

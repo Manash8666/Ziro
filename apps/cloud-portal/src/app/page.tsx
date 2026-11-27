@@ -19,12 +19,37 @@ export default function CloudPortalHome() {
         <StatusBadge variant="zero-fee" label="0% GMV Tax Infrastructure" />
       </header>
 
-      {/* Hero */}
-      <section style={{ textAlign: 'center', marginBottom: 64 }}>
-        <h1 style={{ fontSize: 48, fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 16, color: '#F4F6F9' }}>
+      {/* Hero with subtle radial gradient glow (Wine & Blush / Steamed Cream) */}
+      <section
+        style={{
+          textAlign: 'center',
+          marginBottom: 64,
+          padding: '48px 24px',
+          borderRadius: 24,
+          backgroundImage: 'var(--ziro-hero-glow)',
+          border: '1px solid var(--ziro-border-hairline, #3D1C26)',
+        }}
+      >
+        <h1
+          style={{
+            fontSize: 48,
+            fontWeight: 800,
+            letterSpacing: '-0.02em',
+            marginBottom: 16,
+            color: 'var(--ziro-text-primary, #F6DCE2)',
+          }}
+        >
           The Zero-Tax Commerce Operating System
         </h1>
-        <p style={{ fontSize: 20, color: '#8B95A5', maxWidth: 740, margin: '0 auto 32px auto', lineHeight: 1.6 }}>
+        <p
+          style={{
+            fontSize: 20,
+            color: 'var(--ziro-text-secondary, #C9A3AC)',
+            maxWidth: 740,
+            margin: '0 auto 32px auto',
+            lineHeight: 1.6,
+          }}
+        >
           One unified multi-tenant ledger for your online storefront, B2B wholesale portal, counter POS, and AI shopping agents—with flat-fee pricing and 0% GMV fees.
         </p>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -60,7 +85,15 @@ export default function CloudPortalHome() {
 
       {/* Flat-Tier Transparent Pricing */}
       <section style={{ marginBottom: 64 }}>
-        <h2 style={{ fontSize: 32, fontWeight: 700, marginBottom: 32, textAlign: 'center', color: '#F4F6F9' }}>
+        <h2
+          style={{
+            fontSize: 32,
+            fontWeight: 700,
+            marginBottom: 32,
+            textAlign: 'center',
+            color: 'var(--ziro-text-primary, #F6DCE2)',
+          }}
+        >
           Flat-Tier Transparent Pricing
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
@@ -68,8 +101,11 @@ export default function CloudPortalHome() {
             <div
               key={plan.tier}
               style={{
-                background: '#12161E',
-                border: plan.tier === 'GROWTH' ? '1px solid #00E599' : '1px solid #1F2633',
+                background: 'var(--ziro-bg-card, #221016)',
+                border:
+                  plan.tier === 'GROWTH'
+                    ? '1px solid var(--ziro-cta-bg, #E8A5B5)'
+                    : '1px solid var(--ziro-border-hairline, #3D1C26)',
                 borderRadius: 12,
                 padding: 32,
                 display: 'flex',
@@ -79,19 +115,29 @@ export default function CloudPortalHome() {
             >
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <h3 style={{ fontSize: 22, fontWeight: 700, color: '#F4F6F9' }}>{plan.name}</h3>
-                  <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#00E599', background: 'rgba(0,229,153,0.1)', padding: '2px 8px', borderRadius: 4 }}>
+                  <h3 style={{ fontSize: 22, fontWeight: 700, color: 'var(--ziro-text-primary, #F6DCE2)' }}>{plan.name}</h3>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontFamily: 'monospace',
+                      color: 'var(--ziro-cta-bg, #E8A5B5)',
+                      background: 'var(--ziro-badge-bg, rgba(122,36,59,0.35))',
+                      padding: '2px 8px',
+                      borderRadius: 4,
+                      border: '1px solid var(--ziro-badge-border, #7A243B)',
+                    }}
+                  >
                     0% GMV
                   </span>
                 </div>
-                <div style={{ fontSize: 36, fontWeight: 800, color: '#00E599', marginBottom: 16 }}>
+                <div style={{ fontSize: 36, fontWeight: 800, color: 'var(--ziro-cta-bg, #E8A5B5)', marginBottom: 16 }}>
                   ${plan.monthly_price_usd}
-                  <span style={{ fontSize: 16, color: '#8B95A5', fontWeight: 400 }}> / month</span>
+                  <span style={{ fontSize: 16, color: 'var(--ziro-text-secondary, #C9A3AC)', fontWeight: 400 }}> / month</span>
                 </div>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', color: '#8B95A5', fontSize: 14 }}>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0', color: 'var(--ziro-text-secondary, #C9A3AC)', fontSize: 14 }}>
                   {plan.features.map((feat) => (
                     <li key={feat} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ color: '#00E599' }}>✓</span> {feat}
+                      <span style={{ color: 'var(--ziro-cta-bg, #E8A5B5)' }}>✓</span> {feat}
                     </li>
                   ))}
                 </ul>

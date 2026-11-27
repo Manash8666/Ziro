@@ -13,7 +13,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#090B0E] text-[#F4F6F9] antialiased">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('ziro-theme')||'dark';document.documentElement.setAttribute('data-theme',t);if(t==='light'){document.documentElement.classList.add('light-theme');document.documentElement.classList.remove('dark-theme');}else{document.documentElement.classList.add('dark-theme');document.documentElement.classList.remove('light-theme');}if(window.self!==window.top){document.documentElement.classList.add('is-embedded');}}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] antialiased transition-colors duration-200">
         {children}
       </body>
     </html>

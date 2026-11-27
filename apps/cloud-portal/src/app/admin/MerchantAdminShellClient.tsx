@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import {
   AdminProduct,
@@ -14,8 +14,40 @@ import {
 
 export function MerchantAdminShellClient() {
   const [activeVertical, setActiveVertical] = useState<string>('fashion');
-  const [themeMode, setThemeMode] = useState<'polaris-light' | 'dark-precision'>('dark-precision');
+  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
   const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders' | 'theme-customizer' | 'tax-ledger'>('products');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const saved = (localStorage.getItem('ziro-theme') as 'dark' | 'light') ||
+      (document.documentElement.getAttribute('data-theme') as 'dark' | 'light') ||
+      'dark';
+    setThemeMode(saved);
+
+    const onThemeChange = (e: Event) => {
+      const customEvent = e as CustomEvent<'dark' | 'light'>;
+      if (customEvent.detail) setThemeMode(customEvent.detail);
+    };
+    window.addEventListener('ziro-theme-change', onThemeChange);
+    return () => window.removeEventListener('ziro-theme-change', onThemeChange);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    const next = themeMode === 'dark' ? 'light' : 'dark';
+    setThemeMode(next);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ziro-theme', next);
+      document.documentElement.setAttribute('data-theme', next);
+      if (next === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
+      } else {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+      }
+      window.dispatchEvent(new CustomEvent('ziro-theme-change', { detail: next }));
+    }
+  }, [themeMode]);
 
   // Store data state
   const [stores, setStores] = useState(MULTI_VERTICAL_STORES);
@@ -98,18 +130,18 @@ export function MerchantAdminShellClient() {
     );
   };
 
-  // Theme Variables based on Polaris Light vs Dark Precision
-  const isLight = themeMode === 'polaris-light';
+  // Theme Variables based on Steamed Cream (Day) vs Wine & Blush (Dark)
+  const isLight = themeMode === 'light';
   const themeClasses = {
-    canvas: isLight ? 'bg-[#F1F1F1] text-[#202223]' : 'bg-[#080A0D] text-[#F4F6F9]',
-    topBar: isLight ? 'bg-[#1A1A1A] text-white border-b border-[#2C2C2C]' : 'bg-[#090B0E] text-[#F4F6F9] border-b border-[#1F2633]',
-    sidebar: isLight ? 'bg-[#EBEBEB] border-r border-[#D2D5D8] text-[#202223]' : 'bg-[#0A0D12] border-r border-[#1F2633] text-[#8B95A5]',
-    card: isLight ? 'bg-white border border-[#E1E3E5] shadow-sm' : 'bg-[#12161E] border border-[#1F2633]',
-    tableHead: isLight ? 'bg-[#F7F7F7] border-b border-[#E1E3E5] text-[#6D7175]' : 'bg-[#0F131A] border-b border-[#1F2633] text-[#8B95A5]',
-    rowHover: isLight ? 'hover:bg-[#F9FAFB]' : 'hover:bg-[#1A202C]',
-    subtext: isLight ? 'text-[#6D7175]' : 'text-[#8B95A5]',
-    border: isLight ? 'border-[#E1E3E5]' : 'border-[#1F2633]',
-    input: isLight ? 'bg-white border-[#C9CCCF] text-[#202223] focus:border-[#008060]' : 'bg-[#090B0E] border-[#1F2633] text-[#F4F6F9] focus:border-[#00E599]',
+    canvas: isLight ? 'bg-[#F5EBE1] text-[#1E1A17]' : 'bg-[#14090D] text-[#F6DCE2]',
+    topBar: isLight ? 'bg-[#FAF4EE] text-[#1E1A17] border-b border-[#DBC1AC]' : 'bg-[#221016] text-[#F6DCE2] border-b border-[#3D1C26]',
+    sidebar: isLight ? 'bg-[#FAF4EE]/90 border-r border-[#DBC1AC] text-[#634832]' : 'bg-[#1A0C11] border-r border-[#3D1C26] text-[#C9A3AC]',
+    card: isLight ? 'bg-[#FAF4EE] border border-[#DBC1AC] shadow-sm' : 'bg-[#221016] border border-[#3D1C26]',
+    tableHead: isLight ? 'bg-[#EFE5DC] border-b border-[#DBC1AC] text-[#634832]' : 'bg-[#1A0C11] border-b border-[#3D1C26] text-[#C9A3AC]',
+    rowHover: isLight ? 'hover:bg-[#F0E3D5]' : 'hover:bg-[#2E121B]',
+    subtext: isLight ? 'text-[#634832]' : 'text-[#C9A3AC]',
+    border: isLight ? 'border-[#DBC1AC]' : 'border-[#3D1C26]',
+    input: isLight ? 'bg-white border-[#DBC1AC] text-[#1E1A17] focus:border-[#452F23]' : 'bg-[#14090D] border-[#3D1C26] text-[#F6DCE2] focus:border-[#E8A5B5]',
   };
 
   return (
@@ -118,10 +150,10 @@ export function MerchantAdminShellClient() {
       <header className={`flex h-14 items-center justify-between px-4 ${themeClasses.topBar}`}>
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <span className="font-mono text-base font-black tracking-wider text-[#00E599]">
+            <span className={`font-mono text-base font-black tracking-wider ${isLight ? 'text-[#452F23]' : 'text-[#E8A5B5]'}`}>
               ZIRO
             </span>
-            <span className="rounded bg-[#2E384D]/40 px-1.5 py-0.5 text-[10px] font-mono text-[#8B95A5]">
+            <span className={`rounded px-1.5 py-0.5 text-[10px] font-mono ${isLight ? 'bg-[#DBC1AC]/40 text-[#634832]' : 'bg-[#3D1C26] text-[#C9A3AC]'}`}>
               ADMIN
             </span>
           </Link>
@@ -137,7 +169,11 @@ export function MerchantAdminShellClient() {
                   setCustomizerSettings((prev) => ({ ...prev, brandName: next.name }));
                 }
               }}
-              className="rounded-md border border-[#3E4554] bg-[#12161E] px-3 py-1.5 text-xs font-semibold text-white focus:outline-none focus:ring-1 focus:ring-[#00E599]"
+              className={`rounded-md border px-3 py-1.5 text-xs font-semibold focus:outline-none ${
+                isLight
+                  ? 'border-[#DBC1AC] bg-[#FAF4EE] text-[#1E1A17] focus:ring-1 focus:ring-[#452F23]'
+                  : 'border-[#3D1C26] bg-[#221016] text-[#F6DCE2] focus:ring-1 focus:ring-[#E8A5B5]'
+              }`}
             >
               <option value="fashion">👗 Aura Haute Couture (Fashion)</option>
               <option value="ayurveda">🌿 Veda Botanicals (Ayurveda)</option>
@@ -146,8 +182,12 @@ export function MerchantAdminShellClient() {
             </select>
           </div>
 
-          <span className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-[#00E599]/30 bg-[#00E599]/10 px-2.5 py-0.5 text-[11px] font-mono font-medium text-[#00E599]">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#00E599] animate-pulse" />
+          <span className={`hidden md:inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-mono font-medium ${
+            isLight
+              ? 'border-[#DBC1AC] bg-[#DBC1AC]/30 text-[#452F23]'
+              : 'border-[#7A243B] bg-[#7A243B]/30 text-[#E8A5B5]'
+          }`}>
+            <span className={`h-1.5 w-1.5 rounded-full animate-pulse ${isLight ? 'bg-[#452F23]' : 'bg-[#E8A5B5]'}`} />
             0% GMV Toll Locked
           </span>
         </div>
@@ -164,7 +204,9 @@ export function MerchantAdminShellClient() {
             }
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex text-xs font-mono text-[#8B95A5] hover:text-[#00E599]"
+            className={`hidden sm:inline-flex text-xs font-mono transition-colors ${
+              isLight ? 'text-[#634832] hover:text-[#452F23]' : 'text-[#C9A3AC] hover:text-[#E8A5B5]'
+            }`}
           >
             Storefront ↗
           </a>
@@ -177,18 +219,25 @@ export function MerchantAdminShellClient() {
             }
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:inline-flex text-xs font-mono text-[#8B95A5] hover:text-[#00E599]"
+            className={`hidden sm:inline-flex text-xs font-mono transition-colors ${
+              isLight ? 'text-[#634832] hover:text-[#452F23]' : 'text-[#C9A3AC] hover:text-[#E8A5B5]'
+            }`}
           >
             Counter POS ↗
           </a>
 
-          {/* Theme Mode Toggle (Polaris Light vs Dark Precision) */}
+          {/* Luxury Theme Toggle Button */}
           <button
             type="button"
-            onClick={() => setThemeMode(isLight ? 'dark-precision' : 'polaris-light')}
-            className="rounded-md border border-[#3E4554] bg-[#12161E] px-2.5 py-1 text-xs font-mono text-white hover:bg-[#1F2633]"
+            onClick={toggleTheme}
+            className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-mono font-semibold transition-all ${
+              isLight
+                ? 'border-[#DBC1AC] bg-[#FAF4EE] text-[#1E1A17] hover:border-[#7B5A44] hover:bg-[#F0E3D5]'
+                : 'border-[#3D1C26] bg-[#221016] text-[#F6DCE2] hover:border-[#7A243B] hover:bg-[#2E121B]'
+            }`}
           >
-            {isLight ? '🌙 Dark Precision' : '☀️ Polaris Light'}
+            <span>{isLight ? '☕ Steamed Cream' : '🍷 Wine & Blush'}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${isLight ? 'bg-[#452F23]' : 'bg-[#E8A5B5]'}`} />
           </button>
         </div>
       </header>
@@ -214,11 +263,11 @@ export function MerchantAdminShellClient() {
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold transition-all ${
                     active
                       ? isLight
-                        ? 'bg-[#E1E3E5] text-[#202223]'
-                        : 'bg-[#12161E] text-[#00E599] border border-[#00E599]/30 shadow-sm'
+                        ? 'bg-[#DBC1AC]/40 text-[#452F23] font-bold border border-[#CBB69A]'
+                        : 'bg-[#7A243B]/40 text-[#E8A5B5] font-bold border border-[#7A243B]'
                       : isLight
-                      ? 'text-[#4A4D50] hover:bg-[#E8E8E8]'
-                      : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                      ? 'text-[#634832] hover:bg-[#DBC1AC]/20'
+                      : 'text-[#C9A3AC] hover:bg-[#221016] hover:text-[#F6DCE2]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">

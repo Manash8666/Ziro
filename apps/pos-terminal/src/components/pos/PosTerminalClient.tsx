@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { ThemeToggle } from '@ziro/ui-kit';
 import {
   OfflineCatalogItem,
   PosCartItem,
@@ -281,21 +282,21 @@ export function PosTerminalClient() {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col bg-[#080A0D] text-[#F4F6F9] overflow-hidden select-none font-sans">
+    <div className="flex h-screen w-screen flex-col bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] overflow-hidden select-none font-sans transition-colors duration-200">
       {/* Top Navigation & Status Bar */}
-      <header className="flex h-14 items-center justify-between border-b border-[#1F2633] bg-[#090B0E] px-4">
+      <header className="flex h-14 items-center justify-between border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-4">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-base font-extrabold tracking-wider text-[#00E599]">
+            <span className="font-mono text-base font-extrabold tracking-wider text-[var(--ziro-cta-bg,#E8A5B5)]">
               ZIRO POS
             </span>
-            <span className="rounded bg-[#12161E] border border-[#1F2633] px-1.5 py-0.5 font-mono text-[10px] text-[#8B95A5]">
+            <span className="rounded bg-[var(--ziro-bg-canvas,#14090D)] border border-[var(--ziro-border-hairline,#3D1C26)] px-1.5 py-0.5 font-mono text-[10px] text-[var(--ziro-text-secondary,#C9A3AC)]">
               COUNTER 01
             </span>
           </div>
 
           {/* 0% GMV Fee Invariant Badge */}
-          <span className="hidden sm:inline-flex items-center rounded-full bg-[#00E599]/10 px-2.5 py-0.5 text-[11px] font-mono font-medium text-[#00E599] border border-[#00E599]/30">
+          <span className="hidden sm:inline-flex items-center rounded-full bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] px-2.5 py-0.5 text-[11px] font-mono font-medium text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)]">
             0% GMV Toll Locked
           </span>
 
@@ -309,7 +310,7 @@ export function PosTerminalClient() {
             }
             target="_blank"
             rel="noreferrer"
-            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[#1F2633] bg-[#12161E] px-2 py-0.5 font-mono text-[11px] text-[#8B95A5] hover:text-[#00E599]"
+            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-2 py-0.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-cta-bg,#E8A5B5)] transition-colors"
           >
             Storefront ↗
           </a>
@@ -323,7 +324,7 @@ export function PosTerminalClient() {
             }
             target="_blank"
             rel="noreferrer"
-            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[#1F2633] bg-[#12161E] px-2 py-0.5 font-mono text-[11px] text-[#8B95A5] hover:text-[#00E599]"
+            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-2 py-0.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-cta-bg,#E8A5B5)] transition-colors"
           >
             Admin Portal ↗
           </a>
@@ -335,7 +336,7 @@ export function PosTerminalClient() {
             ref={barcodeInputRef}
             type="text"
             placeholder="Scan barcode or type SKU..."
-            className="w-full rounded-md border border-[#1F2633] bg-[#12161E] px-3 py-1.5 text-xs text-[#F4F6F9] placeholder-[#8B95A5] focus:border-[#00E599] focus:outline-none"
+            className="w-full rounded-md border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-3 py-1.5 text-xs text-[var(--ziro-text-primary,#F6DCE2)] placeholder-[var(--ziro-text-secondary,#C9A3AC)] focus:border-[var(--ziro-cta-bg,#E8A5B5)] focus:outline-none"
             onKeyDown={(e) => {
               if (e.key === 'Enter' && e.currentTarget.value) {
                 handleBarcodeScanned(e.currentTarget.value);
@@ -344,20 +345,23 @@ export function PosTerminalClient() {
           />
         </div>
 
-        {/* Right Status Indicators & Printer Controls */}
+        {/* Right Status Indicators, Luxury Theme Toggle & Printer Controls */}
         <div className="flex items-center gap-3">
+          {/* Luxury Theme Toggle */}
+          <ThemeToggle size="sm" />
+
           {/* Online / Offline status */}
-          <div className="flex items-center gap-1.5 rounded-full border border-[#1F2633] bg-[#12161E] px-2.5 py-1 text-[11px] font-mono">
+          <div className="flex items-center gap-1.5 rounded-full border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-2.5 py-1 text-[11px] font-mono">
             <span
               className={`h-2 w-2 rounded-full ${
-                isOnline ? 'bg-[#00E599]' : 'bg-[#F59E0B] animate-pulse'
+                isOnline ? 'bg-[var(--ziro-cta-bg,#E8A5B5)]' : 'bg-[#D97706] animate-pulse'
               }`}
             />
-            <span className={isOnline ? 'text-[#00E599]' : 'text-[#F59E0B]'}>
+            <span className={isOnline ? 'text-[var(--ziro-cta-bg,#E8A5B5)]' : 'text-[#D97706]'}>
               {isOnline ? 'Online Sync' : 'Offline Mode'}
             </span>
             {pendingSyncCount > 0 && (
-              <span className="rounded-full bg-[#F59E0B]/20 px-1.5 text-[10px] text-[#F59E0B]">
+              <span className="rounded-full bg-[#D97706]/20 px-1.5 text-[10px] text-[#D97706]">
                 {pendingSyncCount} queued
               </span>
             )}
@@ -369,8 +373,8 @@ export function PosTerminalClient() {
             onClick={printerConnected ? handleKickDrawer : handleConnectPrinter}
             className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-mono transition-colors ${
               printerConnected
-                ? 'border-[#00E599]/40 bg-[#00E599]/10 text-[#00E599] hover:bg-[#00E599]/20'
-                : 'border-[#1F2633] bg-[#12161E] text-[#8B95A5] hover:border-[#8B95A5]'
+                ? 'border-[var(--ziro-badge-border,#7A243B)] bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] hover:opacity-90'
+                : 'border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-secondary,#C9A3AC)] hover:border-[var(--ziro-border-hover,#7A243B)]'
             }`}
           >
             <span>🖨️</span>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import React from 'react';
+import { ThemeToggle } from '@ziro/ui-kit';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,18 +31,18 @@ export default function RootLayout({
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(window.self!==window.top){document.documentElement.classList.add('is-embedded');}}catch(e){}`,
+            __html: `try{var t=localStorage.getItem('ziro-theme')||'dark';document.documentElement.setAttribute('data-theme',t);if(t==='light'){document.documentElement.classList.add('light-theme');document.documentElement.classList.remove('dark-theme');}else{document.documentElement.classList.add('dark-theme');document.documentElement.classList.remove('light-theme');}if(window.self!==window.top){document.documentElement.classList.add('is-embedded');}}catch(e){}`,
           }}
         />
       </head>
-      <body className="min-h-screen bg-[#090B0E] text-[#F4F6F9] antialiased">
-        <nav className="border-b border-[#1F2633] bg-[#090B0E]/95 backdrop-blur-md">
+      <body className="min-h-screen bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] antialiased transition-colors duration-200">
+        <nav className="border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)]/95 backdrop-blur-md">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-8">
             <Link
               href="/"
-              className="flex items-center gap-2 font-mono text-sm font-bold tracking-tight text-[#F4F6F9]"
+              className="flex items-center gap-2 font-mono text-sm font-bold tracking-tight text-[var(--ziro-text-primary,#F6DCE2)]"
             >
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded bg-[#00E599]/15 text-xs text-[#00E599]">
+              <span className="inline-flex h-6 w-6 items-center justify-center rounded bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-xs text-[var(--ziro-cta-bg,#E8A5B5)] font-bold">
                 0%
               </span>
               <span>ziro.cloud</span>
@@ -55,14 +56,15 @@ export default function RootLayout({
                     href={item.href}
                     className={`transition ${
                       isHighlight
-                        ? 'rounded-full border border-[#00E599]/40 bg-[#00E599]/15 px-2.5 py-0.5 font-bold text-[#00E599] hover:bg-[#00E599]/25 shadow-sm'
-                        : 'text-slate-400 hover:text-[#00E599]'
+                        ? 'rounded-full border border-[var(--ziro-badge-border,#7A243B)] bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] px-2.5 py-0.5 font-bold text-[var(--ziro-cta-bg,#E8A5B5)] hover:opacity-90 shadow-sm'
+                        : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-cta-bg,#E8A5B5)]'
                     }`}
                   >
                     {item.label}
                   </Link>
                 );
               })}
+              <ThemeToggle size="sm" />
             </div>
           </div>
         </nav>

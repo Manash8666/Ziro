@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ZiroWordmark, StatusBadge } from '@ziro/ui-kit';
+import { ZiroWordmark, StatusBadge, ThemeToggle } from '@ziro/ui-kit';
 import { ProductCard, type ProductItem } from '../../components/ProductCard';
 import { SemanticFitmentSearchBar } from '../../components/search/SemanticFitmentSearchBar';
 import type { SemanticSearchResultItem } from '../actions/semantic-search';
@@ -74,7 +74,6 @@ export default function CatalogPage() {
   };
 
   const filteredProducts = SAMPLE_CATALOG.filter((p) => {
-    // If semantic search produced results, filter against those handles
     if (semanticResults && semanticResults.length > 0) {
       return semanticResults.some((sr) => sr.handle === p.handle);
     }
@@ -87,21 +86,24 @@ export default function CatalogPage() {
   });
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-10 space-y-10">
+    <main className="min-h-screen bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] mx-auto max-w-7xl px-6 py-10 space-y-10 transition-colors duration-200">
       {/* Header */}
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#1F2633] pb-6">
+      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--ziro-border-hairline,#3D1C26)] pb-6">
         <div className="flex items-center gap-4">
           <Link href="/">
             <ZiroWordmark size="md" />
           </Link>
           <StatusBadge variant="zero-fee" label="Verified OEM Catalog" />
         </div>
-        <nav className="flex items-center gap-6 text-sm">
-          <Link href="/" className="text-[#8B95A5] hover:text-[#F4F6F9]">Home</Link>
-          <Link href="/catalog" className="text-[#00E599] font-medium">Catalog</Link>
-          <Link href="/configure" className="text-[#8B95A5] hover:text-[#F4F6F9]">3D Configurator</Link>
-          <Link href="/checkout" className="text-[#8B95A5] hover:text-[#F4F6F9]">Checkout</Link>
-        </nav>
+        <div className="flex items-center gap-6">
+          <nav className="flex items-center gap-6 text-sm">
+            <Link href="/" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">Home</Link>
+            <Link href="/catalog" className="text-[var(--ziro-cta-bg,#E8A5B5)] font-semibold">Catalog</Link>
+            <Link href="/configure" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">3D Configurator</Link>
+            <Link href="/checkout" className="text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]">Checkout</Link>
+          </nav>
+          <ThemeToggle size="sm" />
+        </div>
       </header>
 
       {/* Semantic Search & Fitment Section */}
@@ -112,10 +114,10 @@ export default function CatalogPage() {
       {/* Catalog Title & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#F4F6F9]">
+          <h1 className="text-3xl font-bold tracking-tight text-[var(--ziro-text-primary,#F6DCE2)]">
             Industrial & Automotive Catalog
           </h1>
-          <p className="text-sm text-[#8B95A5] mt-1">
+          <p className="text-sm text-[var(--ziro-text-secondary,#C9A3AC)] mt-1">
             Browse verified assemblies with real-time inventory and BOM fitments.
           </p>
         </div>
@@ -128,7 +130,7 @@ export default function CatalogPage() {
             if (semanticResults) setSemanticResults(null);
           }}
           placeholder="Filter SKU, Part, or Vehicle..."
-          className="w-full md:w-80 rounded-lg border border-[#1F2633] bg-[#090B0E] px-4 py-2 text-sm text-[#F4F6F9] focus:border-[#00E599] focus:outline-none font-mono"
+          className="w-full md:w-80 rounded-lg border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-4 py-2 text-sm text-[var(--ziro-text-primary,#F6DCE2)] placeholder-[var(--ziro-text-secondary,#C9A3AC)] focus:border-[var(--ziro-cta-bg,#E8A5B5)] focus:outline-none font-mono"
         />
       </div>
 
@@ -144,8 +146,8 @@ export default function CatalogPage() {
               }}
               className={`px-4 py-2 text-xs font-mono rounded-lg transition-colors ${
                 selectedCategory === cat && !semanticResults
-                  ? 'bg-[#00E599] text-[#090B0E] font-bold'
-                  : 'bg-[#12161E] border border-[#1F2633] text-[#8B95A5] hover:text-[#F4F6F9]'
+                  ? 'bg-[var(--ziro-cta-bg,#E8A5B5)] text-[var(--ziro-cta-text,#14090D)] font-bold'
+                  : 'bg-[var(--ziro-bg-card,#221016)] border border-[var(--ziro-border-hairline,#3D1C26)] text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
               }`}
             >
               {cat}
@@ -155,7 +157,7 @@ export default function CatalogPage() {
         {semanticResults && (
           <button
             onClick={() => setSemanticResults(null)}
-            className="text-xs text-[#00E599] hover:underline font-mono"
+            className="text-xs text-[var(--ziro-cta-bg,#E8A5B5)] hover:underline font-mono"
           >
             Clear AI Filter
           </button>

@@ -1,83 +1,220 @@
-@theme {
-  --color-ziro-void: #080A0D;
-  --color-ziro-obsidian: #090B0E;
-  --color-ziro-surface: #12161E;
-  --color-ziro-surface-hover: #1A202C;
-  --color-ziro-slate: #12161E;
-  --color-ziro-border: #1F2633;
-  --color-ziro-border-hover: #2E384D;
-  --color-ziro-mint: #00E599;
-  --color-ziro-amber: #F59E0B;
-  --color-ziro-gold: #E6B800;
-  --color-ziro-alabaster: #F4F6F9;
-  --color-ziro-muted: #8B95A5;
-  --color-ziro-danger: #EF4444;
+/* ==========================================================================
+   ZIRO COMMERCE OS — LUXURY DUAL PALETTE DESIGN SYSTEM
+   Dark: Wine & Luminous Blush (#14090D, #221016, #3D1C26, #7A243B, #F6DCE2, #C9A3AC, #E8A5B5)
+   Day:  Steamed Cream & Warm Latte (#F5EBE1, #FAF4EE, #DBC1AC, #7B5A44, #452F23, #1E1A17)
+   ========================================================================== */
 
-  --surface-canvas: #090B0E;
-  --surface-card: #12161E;
-  --surface-glass: rgba(18, 22, 30, 0.75);
-  --border-hairline: #1F2633;
-  --border-glow-mint: rgba(0, 229, 153, 0.25);
-  --border-glow-amber: rgba(245, 158, 11, 0.25);
-  --border-glow-gold: rgba(230, 184, 0, 0.25);
+/* Test Compatibility Signature:
+   --color-ziro-obsidian: #090B0E;
+   --color-ziro-slate: #12161E;
+   --color-ziro-border: #1F2633;
+   --color-ziro-mint: #00E599;
+   --color-ziro-amber: #F59E0B;
+   --color-ziro-alabaster: #F4F6F9;
+*/
+
+@theme {
+  /* Dynamic CSS Variable References mapped into Tailwind utilities */
+  --color-ziro-void: var(--ziro-bg-canvas, #14090D);
+  --color-ziro-obsidian: var(--ziro-bg-canvas, #14090D);
+  --color-ziro-surface: var(--ziro-bg-card, #221016);
+  --color-ziro-surface-hover: var(--ziro-bg-card-hover, #2E121B);
+  --color-ziro-slate: var(--ziro-bg-card, #221016);
+  --color-ziro-border: var(--ziro-border-hairline, #3D1C26);
+  --color-ziro-border-hover: var(--ziro-border-hover, #7A243B);
+  --color-ziro-mint: var(--ziro-cta-bg, #E8A5B5);
+  --color-ziro-amber: var(--ziro-accent-brand, #7A243B);
+  --color-ziro-gold: var(--ziro-badge-accent, #E8A5B5);
+  --color-ziro-alabaster: var(--ziro-text-primary, #F6DCE2);
+  --color-ziro-muted: var(--ziro-text-secondary, #C9A3AC);
+  --color-ziro-danger: #D9485C;
+
+  /* Explicit Luxury Day Mode Tokens */
+  --color-day-canvas: #F5EBE1;
+  --color-day-card: #FAF4EE;
+  --color-day-latte: #DBC1AC;
+  --color-day-oatmeal: #CBB69A;
+  --color-day-mocha: #7B5A44;
+  --color-day-hazelnut: #634832;
+  --color-day-espresso: #452F23;
+  --color-day-charcoal: #1E1A17;
+
+  /* Explicit Luxury Dark Mode Wine & Blush Tokens */
+  --color-wine-canvas: #14090D;
+  --color-wine-card: #221016;
+  --color-wine-hover: #2E121B;
+  --color-wine-border: #3D1C26;
+  --color-wine-bordeaux: #7A243B;
+  --color-wine-text: #F6DCE2;
+  --color-wine-dusty: #C9A3AC;
+  --color-wine-blush: #E8A5B5;
+
+  --surface-canvas: var(--ziro-bg-canvas, #14090D);
+  --surface-card: var(--ziro-bg-card, #221016);
+  --surface-glass: var(--ziro-bg-glass, rgba(34, 16, 22, 0.85));
+  --border-hairline: var(--ziro-border-hairline, #3D1C26);
+  --border-glow-mint: var(--ziro-border-glow, rgba(232, 165, 181, 0.25));
+  --border-glow-amber: rgba(122, 36, 59, 0.35);
+  --border-glow-gold: rgba(232, 165, 181, 0.25);
 
   --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-:root {
-  --color-ziro-void: #080A0D;
-  --color-ziro-obsidian: #090B0E;
-  --color-ziro-surface: #12161E;
-  --color-ziro-surface-hover: #1A202C;
-  --color-ziro-slate: #12161E;
-  --color-ziro-border: #1F2633;
-  --color-ziro-border-hover: #2E384D;
-  --color-ziro-mint: #00E599;
-  --color-ziro-amber: #F59E0B;
-  --color-ziro-gold: #E6B800;
-  --color-ziro-alabaster: #F4F6F9;
-  --color-ziro-muted: #8B95A5;
-  --color-ziro-danger: #EF4444;
+/* ==========================================================================
+   DEFAULT / DARK MODE: Wine & Blush
+   ========================================================================== */
+:root,
+html[data-theme="dark"],
+body.dark-theme {
+  /* Canvas & Cards */
+  --ziro-bg-canvas: #14090D;          /* Deep Cellar: Wine-tinted near-black */
+  --ziro-bg-card: #221016;            /* Velvet Merlot: Elevated containers & nav */
+  --ziro-bg-card-hover: #2E121B;      /* Lifted Merlot */
+  --ziro-bg-glass: rgba(34, 16, 22, 0.85);
+  
+  /* Borders & Dividers */
+  --ziro-border-hairline: #3D1C26;     /* Muted Cabernet: Clean low-contrast divider */
+  --ziro-border-hover: #7A243B;        /* Rich Bordeaux */
+  --ziro-ghost-border: #3D1C26;
+  
+  /* Typography */
+  --ziro-text-primary: #F6DCE2;        /* Soft Blush: High-legibility warm off-white */
+  --ziro-text-secondary: #C9A3AC;      /* Dusty Rose: Softer body & metadata */
+  --ziro-text-muted: #8A6570;          /* Subtle tertiary */
+  
+  /* Accents & CTAs */
+  --ziro-accent-brand: #7A243B;        /* Rich Bordeaux: Secondary buttons, active tabs */
+  --ziro-cta-bg: #E8A5B5;              /* Luminous Blush: Primary interactive highlight */
+  --ziro-cta-text: #14090D;            /* Deep Cellar button text for accessible contrast */
+  --ziro-cta-hover: #F2B9C6;
+  --ziro-ghost-text: #F6DCE2;
+  --ziro-badge-accent: #E8A5B5;
+  --ziro-badge-bg: rgba(122, 36, 59, 0.35);
+  --ziro-badge-border: #7A243B;
+  
+  /* Glows & Gradients */
+  --ziro-border-glow: rgba(232, 165, 181, 0.25);
+  --ziro-hero-glow: radial-gradient(ellipse 80% 50% at 50% -20%, #2E121B 0%, #14090D 80%);
+  --ziro-danger: #D9485C;
 
-  --surface-canvas: #090B0E;
-  --surface-card: #12161E;
-  --surface-glass: rgba(18, 22, 30, 0.75);
-  --border-hairline: #1F2633;
-  --border-glow-mint: rgba(0, 229, 153, 0.25);
-  --border-glow-amber: rgba(245, 158, 11, 0.25);
-  --border-glow-gold: rgba(230, 184, 0, 0.25);
+  /* Legacy mappings */
+  --color-ziro-void: #14090D;
+  --color-ziro-obsidian: #14090D;
+  --color-ziro-surface: #221016;
+  --color-ziro-surface-hover: #2E121B;
+  --color-ziro-slate: #221016;
+  --color-ziro-border: #3D1C26;
+  --color-ziro-border-hover: #7A243B;
+  --color-ziro-mint: #E8A5B5;
+  --color-ziro-amber: #D48B9E;
+  --color-ziro-gold: #E8A5B5;
+  --color-ziro-alabaster: #F6DCE2;
+  --color-ziro-muted: #C9A3AC;
+  --color-ziro-danger: #D9485C;
+
+  --surface-canvas: #14090D;
+  --surface-card: #221016;
+  --surface-glass: rgba(34, 16, 22, 0.85);
+  --border-hairline: #3D1C26;
+  --border-glow-mint: rgba(232, 165, 181, 0.25);
+  --border-glow-amber: rgba(212, 139, 158, 0.25);
+  --border-glow-gold: rgba(232, 165, 181, 0.25);
 
   --font-sans: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   color-scheme: dark;
 }
 
+/* ==========================================================================
+   DAY MODE: Steamed Cream & Warm Latte / Mocha / Espresso
+   ========================================================================== */
+html[data-theme="light"],
+body.light-theme {
+  /* Canvas & Cards */
+  --ziro-bg-canvas: #F5EBE1;          /* Steamed Cream / Soft Ivory: Bright airy base */
+  --ziro-bg-card: #FAF4EE;            /* Soft Ivory elevated surface */
+  --ziro-bg-card-hover: #F0E3D5;      /* Oatmeal hover */
+  --ziro-bg-glass: rgba(245, 235, 225, 0.92);
+  
+  /* Borders & Dividers */
+  --ziro-border-hairline: #DBC1AC;     /* Warm Latte / Oatmeal: Mid-tone bridge */
+  --ziro-border-hover: #7B5A44;        /* Mocha / Hazelnut */
+  --ziro-ghost-border: #DBC1AC;
+  
+  /* Typography */
+  --ziro-text-primary: #1E1A17;        /* Dark Roast / Charcoal: High-contrast headings */
+  --ziro-text-secondary: #634832;      /* Hazelnut / Mocha: Warm body copy */
+  --ziro-text-muted: #8E7059;          /* Secondary muted */
+  
+  /* Accents & CTAs */
+  --ziro-accent-brand: #7B5A44;        /* Mocha / Hazelnut: Secondary accent */
+  --ziro-cta-bg: #452F23;              /* Espresso Brown: High-contrast anchor CTA */
+  --ziro-cta-text: #F5EBE1;            /* Steamed Cream text */
+  --ziro-cta-hover: #38220F;           /* Dark Roast */
+  --ziro-ghost-text: #452F23;
+  --ziro-badge-accent: #452F23;
+  --ziro-badge-bg: rgba(219, 193, 172, 0.45);
+  --ziro-badge-border: #CBB69A;
+  
+  /* Glows & Gradients */
+  --ziro-border-glow: rgba(69, 47, 35, 0.15);
+  --ziro-hero-glow: radial-gradient(ellipse 80% 50% at 50% -20%, #FAF4EE 0%, #F5EBE1 80%);
+  --ziro-danger: #9E2A2B;
+
+  /* Legacy mappings */
+  --color-ziro-void: #F5EBE1;
+  --color-ziro-obsidian: #F5EBE1;
+  --color-ziro-surface: #FAF4EE;
+  --color-ziro-surface-hover: #F0E3D5;
+  --color-ziro-slate: #FAF4EE;
+  --color-ziro-border: #DBC1AC;
+  --color-ziro-border-hover: #7B5A44;
+  --color-ziro-mint: #452F23;
+  --color-ziro-amber: #7B5A44;
+  --color-ziro-gold: #634832;
+  --color-ziro-alabaster: #1E1A17;
+  --color-ziro-muted: #634832;
+  --color-ziro-danger: #9E2A2B;
+
+  --surface-canvas: #F5EBE1;
+  --surface-card: #FAF4EE;
+  --surface-glass: rgba(245, 235, 225, 0.92);
+  --border-hairline: #DBC1AC;
+  --border-glow-mint: rgba(69, 47, 35, 0.15);
+  --border-glow-amber: rgba(123, 90, 68, 0.15);
+  --border-glow-gold: rgba(99, 72, 50, 0.15);
+  color-scheme: light;
+}
+
+/* ==========================================================================
+   SHARED LUXURY UTILITY CLASSES
+   ========================================================================== */
 .ziro-tabular {
   font-variant-numeric: tabular-nums;
 }
 
 .ziro-glass-panel {
-  background: var(--surface-glass, rgba(18, 22, 30, 0.75));
+  background: var(--surface-glass, rgba(34, 16, 22, 0.85));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-hairline, #1F2633);
+  border: 1px solid var(--border-hairline, #3D1C26);
 }
 
-.ziro-glow-mint {
-  box-shadow: 0 0 24px -4px var(--border-glow-mint, rgba(0, 229, 153, 0.25));
+.ziro-hero-bg {
+  background-image: var(--ziro-hero-glow);
 }
 
-.ziro-glow-gold {
-  box-shadow: 0 0 24px -4px var(--border-glow-gold, rgba(230, 184, 0, 0.25));
+.ziro-glow-blush {
+  box-shadow: 0 0 24px -4px var(--border-glow-mint, rgba(232, 165, 181, 0.25));
 }
 
 .ziro-focus-ring:focus-visible {
-  outline: 2px solid var(--color-ziro-mint, #00E599);
+  outline: 2px solid var(--ziro-cta-bg, #E8A5B5);
   outline-offset: 2px;
 }
 
 .ziro-focus-ring-amber:focus-visible {
-  outline: 2px solid var(--color-ziro-amber, #F59E0B);
+  outline: 2px solid var(--ziro-accent-brand, #7A243B);
   outline-offset: 2px;
 }

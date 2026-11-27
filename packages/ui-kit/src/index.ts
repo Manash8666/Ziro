@@ -54,6 +54,11 @@ export {
   ZiroNavigationHeader,
   type ZiroNavigationHeaderProps,
 } from './components/ZiroNavigationHeader.js';
+export {
+  ThemeToggle,
+  type ThemeToggleProps,
+  type ThemeMode,
+} from './components/ThemeToggle.js';
 
 export * from './graphics/index.js';
 

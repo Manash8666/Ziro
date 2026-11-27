@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ThemeToggle } from '@ziro/ui-kit';
 
 export type ConsoleTab = 'storefront' | 'admin' | 'pos' | 'split-admin-pos' | 'split-admin-store';
 export type ViewportMode = 'desktop' | 'tablet' | 'mobile';
@@ -51,18 +52,18 @@ export function OmniConsoleClient({
 
   const viewportWidthClass =
     viewport === 'mobile'
-      ? 'max-w-[390px] h-[820px] rounded-2xl border border-[#1F2633] shadow-2xl mx-auto overflow-hidden'
+      ? 'max-w-[390px] h-[820px] rounded-2xl border border-[var(--ziro-border-hairline,#3D1C26)] shadow-2xl mx-auto overflow-hidden'
       : viewport === 'tablet'
-        ? 'max-w-[768px] h-[900px] rounded-xl border border-[#1F2633] shadow-2xl mx-auto overflow-hidden'
+        ? 'max-w-[768px] h-[900px] rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] shadow-2xl mx-auto overflow-hidden'
         : 'w-full h-full';
 
   return (
-    <div className="flex h-[calc(100vh-57px)] w-full flex-col bg-[#080A0D] text-[#F4F6F9] overflow-hidden">
+    <div className="flex h-[calc(100vh-57px)] w-full flex-col bg-[var(--ziro-bg-canvas,#14090D)] text-[var(--ziro-text-primary,#F6DCE2)] overflow-hidden transition-colors duration-200">
       {/* Top Console Toolbar */}
-      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[#1F2633] bg-[#090B0E] px-4 py-2 text-xs">
+      <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-4 py-2 text-xs">
         {/* Left: Mode Switcher Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="font-mono font-bold text-[#00E599] pr-2 hidden sm:inline-block">
+          <span className="font-mono font-bold text-[var(--ziro-cta-bg,#E8A5B5)] pr-2 hidden sm:inline-block">
             ZIRO 3-IN-1:
           </span>
 
@@ -71,8 +72,8 @@ export function OmniConsoleClient({
             onClick={() => setActiveTab('split-admin-pos')}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-xs font-semibold transition-all ${
               activeTab === 'split-admin-pos'
-                ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-sm'
-                : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] shadow-sm'
+                : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:bg-[var(--ziro-bg-card-hover,#2E121B)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
             }`}
           >
             <span>⚡ Split (Admin + POS)</span>
@@ -83,8 +84,8 @@ export function OmniConsoleClient({
             onClick={() => setActiveTab('split-admin-store')}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-xs font-semibold transition-all ${
               activeTab === 'split-admin-store'
-                ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-sm'
-                : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] shadow-sm'
+                : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:bg-[var(--ziro-bg-card-hover,#2E121B)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
             }`}
           >
             <span>⚡ Split (Admin + Store)</span>
@@ -95,8 +96,8 @@ export function OmniConsoleClient({
             onClick={() => setActiveTab('storefront')}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-xs font-semibold transition-all ${
               activeTab === 'storefront'
-                ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-sm'
-                : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] shadow-sm'
+                : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:bg-[var(--ziro-bg-card-hover,#2E121B)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
             }`}
           >
             <span>🛍️ Storefront</span>
@@ -107,8 +108,8 @@ export function OmniConsoleClient({
             onClick={() => setActiveTab('admin')}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-xs font-semibold transition-all ${
               activeTab === 'admin'
-                ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-sm'
-                : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] shadow-sm'
+                : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:bg-[var(--ziro-bg-card-hover,#2E121B)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
             }`}
           >
             <span>⚙️ Merchant Admin</span>
@@ -119,25 +120,30 @@ export function OmniConsoleClient({
             onClick={() => setActiveTab('pos')}
             className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 font-mono text-xs font-semibold transition-all ${
               activeTab === 'pos'
-                ? 'bg-[#00E599]/15 text-[#00E599] border border-[#00E599]/40 shadow-sm'
-                : 'text-[#8B95A5] hover:bg-[#12161E] hover:text-[#F4F6F9]'
+                ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] shadow-sm'
+                : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:bg-[var(--ziro-bg-card-hover,#2E121B)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
             }`}
           >
             <span>📟 Counter POS</span>
           </button>
         </div>
 
-        {/* Center / Right Controls: Viewport Mode & Direct Link */}
+        {/* Center / Right Controls: Viewport Mode, Direct Link & Theme Toggle */}
         <div className="flex items-center gap-2">
+          {/* Luxury Theme Toggle */}
+          <ThemeToggle size="sm" />
+
           {/* Viewport switchers (only in single-tab view) */}
           {!activeTab.startsWith('split') && (
-            <div className="hidden sm:flex items-center rounded-lg border border-[#1F2633] bg-[#12161E] p-0.5">
+            <div className="hidden sm:flex items-center rounded-lg border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] p-0.5">
               <button
                 type="button"
                 onClick={() => setViewport('desktop')}
                 title="Desktop View"
-                className={`rounded px-2 py-1 font-mono text-[11px] ${
-                  viewport === 'desktop' ? 'bg-[#1F2633] text-[#00E599]' : 'text-[#8B95A5]'
+                className={`rounded px-2 py-1 font-mono text-[11px] transition-colors ${
+                  viewport === 'desktop'
+                    ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold'
+                    : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
                 }`}
               >
                 🖥️ 100%
@@ -146,8 +152,10 @@ export function OmniConsoleClient({
                 type="button"
                 onClick={() => setViewport('tablet')}
                 title="iPad / Tablet View"
-                className={`rounded px-2 py-1 font-mono text-[11px] ${
-                  viewport === 'tablet' ? 'bg-[#1F2633] text-[#00E599]' : 'text-[#8B95A5]'
+                className={`rounded px-2 py-1 font-mono text-[11px] transition-colors ${
+                  viewport === 'tablet'
+                    ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold'
+                    : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
                 }`}
               >
                 📱 Tablet
@@ -156,8 +164,10 @@ export function OmniConsoleClient({
                 type="button"
                 onClick={() => setViewport('mobile')}
                 title="Mobile View"
-                className={`rounded px-2 py-1 font-mono text-[11px] ${
-                  viewport === 'mobile' ? 'bg-[#1F2633] text-[#00E599]' : 'text-[#8B95A5]'
+                className={`rounded px-2 py-1 font-mono text-[11px] transition-colors ${
+                  viewport === 'mobile'
+                    ? 'bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold'
+                    : 'text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-text-primary,#F6DCE2)]'
                 }`}
               >
                 📱 Mobile
@@ -170,7 +180,7 @@ export function OmniConsoleClient({
             type="button"
             onClick={() => setRefreshKey((k) => k + 1)}
             title="Reload View"
-            className="rounded-lg border border-[#1F2633] bg-[#12161E] px-2 py-1 font-mono text-xs text-[#8B95A5] hover:text-[#00E599]"
+            className="rounded-lg border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-2 py-1 font-mono text-xs text-[var(--ziro-text-secondary,#C9A3AC)] hover:text-[var(--ziro-cta-bg,#E8A5B5)] transition-colors"
           >
             ⟳ Reload
           </button>
@@ -188,31 +198,31 @@ export function OmniConsoleClient({
             }
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 rounded-lg border border-[#1F2633] bg-[#12161E] px-2.5 py-1 font-mono text-xs text-[#8B95A5] hover:border-[#00E599]/40 hover:text-[#00E599]"
+            className="flex items-center gap-1 rounded-lg border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] px-2.5 py-1 font-mono text-xs text-[var(--ziro-text-secondary,#C9A3AC)] hover:border-[var(--ziro-border-hover,#7A243B)] hover:text-[var(--ziro-cta-bg,#E8A5B5)] transition-colors"
           >
             <span>Open Tab ↗</span>
           </a>
 
           {/* 0% Tax Invariant Badge */}
-          <span className="hidden xl:inline-flex items-center rounded-full bg-[#00E599]/10 px-2 py-0.5 font-mono text-[10px] text-[#00E599] border border-[#00E599]/30">
+          <span className="hidden xl:inline-flex items-center rounded-full bg-[var(--ziro-badge-bg,rgba(122,36,59,0.35))] px-2 py-0.5 font-mono text-[10px] text-[var(--ziro-cta-bg,#E8A5B5)] border border-[var(--ziro-badge-border,#7A243B)] font-bold">
             0% GMV Toll
           </span>
         </div>
       </header>
 
       {/* Main Workspace Frame Area */}
-      <main className="flex-1 overflow-hidden bg-[#050608] p-2">
+      <main className="flex-1 overflow-hidden bg-[var(--ziro-bg-canvas,#14090D)] p-2">
         {/* VIEW 1: SPLIT SCREEN (Merchant Admin Left, Counter POS Right) */}
         {activeTab === 'split-admin-pos' && (
           <div className="grid h-full w-full grid-cols-1 md:grid-cols-2 gap-2">
             {/* Left: Merchant Admin */}
-            <div className="flex flex-col h-full rounded-xl border border-[#1F2633] bg-[#090B0E] overflow-hidden shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#1F2633] bg-[#12161E] px-3 py-1.5 font-mono text-[11px] text-[#8B95A5]">
-                <div className="flex items-center gap-1.5 text-[#F4F6F9] font-semibold">
+            <div className="flex flex-col h-full rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] overflow-hidden shadow-lg">
+              <div className="flex items-center justify-between border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-3 py-1.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)]">
+                <div className="flex items-center gap-1.5 text-[var(--ziro-text-primary,#F6DCE2)] font-semibold">
                   <span>⚙️ Merchant Admin Shell</span>
-                  <span className="text-[10px] text-[#00E599]">● Live Polaris</span>
+                  <span className="text-[10px] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold">● Live Operations</span>
                 </div>
-                <a href={adminUrl} target="_blank" rel="noreferrer" className="hover:text-[#00E599]">
+                <a href={adminUrl} target="_blank" rel="noreferrer" className="hover:text-[var(--ziro-cta-bg,#E8A5B5)]">
                   Popout ↗
                 </a>
               </div>
@@ -220,18 +230,18 @@ export function OmniConsoleClient({
                 key={`split-admin-${refreshKey}`}
                 src={adminUrl}
                 title="Merchant Admin Shell"
-                className="h-full w-full border-0 bg-[#090B0E]"
+                className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
               />
             </div>
 
             {/* Right: Counter POS */}
-            <div className="flex flex-col h-full rounded-xl border border-[#1F2633] bg-[#090B0E] overflow-hidden shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#1F2633] bg-[#12161E] px-3 py-1.5 font-mono text-[11px] text-[#8B95A5]">
-                <div className="flex items-center gap-1.5 text-[#F4F6F9] font-semibold">
+            <div className="flex flex-col h-full rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] overflow-hidden shadow-lg">
+              <div className="flex items-center justify-between border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-3 py-1.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)]">
+                <div className="flex items-center gap-1.5 text-[var(--ziro-text-primary,#F6DCE2)] font-semibold">
                   <span>📟 Offline Counter POS</span>
-                  <span className="text-[10px] text-[#00E599]">● Serwist PWA</span>
+                  <span className="text-[10px] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold">● Serwist PWA</span>
                 </div>
-                <a href={posUrl} target="_blank" rel="noreferrer" className="hover:text-[#00E599]">
+                <a href={posUrl} target="_blank" rel="noreferrer" className="hover:text-[var(--ziro-cta-bg,#E8A5B5)]">
                   Popout ↗
                 </a>
               </div>
@@ -240,7 +250,7 @@ export function OmniConsoleClient({
                 src={posUrl}
                 title="Counter POS Terminal"
                 allow="serial; usb; clipboard-read; clipboard-write; camera"
-                className="h-full w-full border-0 bg-[#080A0D]"
+                className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
               />
             </div>
           </div>
@@ -250,13 +260,13 @@ export function OmniConsoleClient({
         {activeTab === 'split-admin-store' && (
           <div className="grid h-full w-full grid-cols-1 md:grid-cols-2 gap-2">
             {/* Left: Merchant Admin */}
-            <div className="flex flex-col h-full rounded-xl border border-[#1F2633] bg-[#090B0E] overflow-hidden shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#1F2633] bg-[#12161E] px-3 py-1.5 font-mono text-[11px] text-[#8B95A5]">
-                <div className="flex items-center gap-1.5 text-[#F4F6F9] font-semibold">
+            <div className="flex flex-col h-full rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] overflow-hidden shadow-lg">
+              <div className="flex items-center justify-between border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-3 py-1.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)]">
+                <div className="flex items-center gap-1.5 text-[var(--ziro-text-primary,#F6DCE2)] font-semibold">
                   <span>⚙️ Merchant Admin Shell</span>
-                  <span className="text-[10px] text-[#00E599]">● Live Polaris</span>
+                  <span className="text-[10px] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold">● Live Operations</span>
                 </div>
-                <a href={adminUrl} target="_blank" rel="noreferrer" className="hover:text-[#00E599]">
+                <a href={adminUrl} target="_blank" rel="noreferrer" className="hover:text-[var(--ziro-cta-bg,#E8A5B5)]">
                   Popout ↗
                 </a>
               </div>
@@ -264,18 +274,18 @@ export function OmniConsoleClient({
                 key={`split-admin2-${refreshKey}`}
                 src={adminUrl}
                 title="Merchant Admin Shell"
-                className="h-full w-full border-0 bg-[#090B0E]"
+                className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
               />
             </div>
 
             {/* Right: Online Storefront */}
-            <div className="flex flex-col h-full rounded-xl border border-[#1F2633] bg-[#090B0E] overflow-hidden shadow-lg">
-              <div className="flex items-center justify-between border-b border-[#1F2633] bg-[#12161E] px-3 py-1.5 font-mono text-[11px] text-[#8B95A5]">
-                <div className="flex items-center gap-1.5 text-[#F4F6F9] font-semibold">
+            <div className="flex flex-col h-full rounded-xl border border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-canvas,#14090D)] overflow-hidden shadow-lg">
+              <div className="flex items-center justify-between border-b border-[var(--ziro-border-hairline,#3D1C26)] bg-[var(--ziro-bg-card,#221016)] px-3 py-1.5 font-mono text-[11px] text-[var(--ziro-text-secondary,#C9A3AC)]">
+                <div className="flex items-center gap-1.5 text-[var(--ziro-text-primary,#F6DCE2)] font-semibold">
                   <span>🛍️ Customer Storefront</span>
-                  <span className="text-[10px] text-[#00E599]">● 3D &amp; Fitment</span>
+                  <span className="text-[10px] text-[var(--ziro-cta-bg,#E8A5B5)] font-bold">● 3D &amp; Fitment</span>
                 </div>
-                <a href={storefrontUrl} target="_blank" rel="noreferrer" className="hover:text-[#00E599]">
+                <a href={storefrontUrl} target="_blank" rel="noreferrer" className="hover:text-[var(--ziro-cta-bg,#E8A5B5)]">
                   Popout ↗
                 </a>
               </div>
@@ -283,7 +293,7 @@ export function OmniConsoleClient({
                 key={`split-store-${refreshKey}`}
                 src={storefrontUrl}
                 title="Customer Storefront"
-                className="h-full w-full border-0 bg-[#080A0D]"
+                className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
               />
             </div>
           </div>
@@ -296,7 +306,7 @@ export function OmniConsoleClient({
               key={`single-storefront-${refreshKey}`}
               src={storefrontUrl}
               title="Customer Storefront"
-              className="h-full w-full border-0 bg-[#080A0D]"
+              className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
             />
           </div>
         </div>
@@ -308,7 +318,7 @@ export function OmniConsoleClient({
               key={`single-admin-${refreshKey}`}
               src={adminUrl}
               title="Merchant Admin Shell"
-              className="h-full w-full border-0 bg-[#090B0E]"
+              className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
             />
           </div>
         </div>
@@ -321,7 +331,7 @@ export function OmniConsoleClient({
               src={posUrl}
               title="Counter POS Terminal"
               allow="serial; usb; clipboard-read; clipboard-write; camera"
-              className="h-full w-full border-0 bg-[#080A0D]"
+              className="h-full w-full border-0 bg-[var(--ziro-bg-canvas,#14090D)]"
             />
           </div>
         </div>
