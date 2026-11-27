@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@ziro/migrator": "workspace:*",
     "@ziro/shared-types": "workspace:*",
     "@ziro/ui-kit": "workspace:*",
     "next": "^16.4.6",
