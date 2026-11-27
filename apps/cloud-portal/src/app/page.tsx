@@ -28,11 +28,14 @@ export default function CloudPortalHome() {
           One unified multi-tenant ledger for your online storefront, B2B wholesale portal, counter POS, and AI shopping agents—with flat-fee pricing and 0% GMV fees.
         </p>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/onboarding">
-            <ZiroButton variant="primary" size="lg">Deploy Store in 60s</ZiroButton>
+          <Link href="/console">
+            <ZiroButton variant="primary" size="lg">⚡ Open 3-in-1 Omni Console</ZiroButton>
           </Link>
-          <Link href="/docs">
-            <ZiroButton variant="secondary" size="lg">Explore Docs</ZiroButton>
+          <Link href="/admin">
+            <ZiroButton variant="secondary" size="lg">Merchant Admin</ZiroButton>
+          </Link>
+          <Link href="/onboarding">
+            <ZiroButton variant="ghost" size="lg">Deploy Store in 60s</ZiroButton>
           </Link>
         </div>
       </section>

@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 const CLOUD_NAV_LINKS = [
+  { href: '/console', label: '⚡ 3-in-1 Console', highlight: true },
+  { href: '/admin', label: 'Merchant Admin' },
   { href: '/', label: 'Overview' },
   { href: '/onboarding', label: 'Launch Store' },
   { href: '/dashboard', label: 'Dashboard' },
@@ -38,15 +40,22 @@ export default function RootLayout({
               <span>ziro.cloud</span>
             </Link>
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
-              {CLOUD_NAV_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-slate-400 transition hover:text-[#00E599]"
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {CLOUD_NAV_LINKS.map((item) => {
+                const isHighlight = 'highlight' in item && item.highlight;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`transition ${
+                      isHighlight
+                        ? 'rounded-full border border-[#00E599]/40 bg-[#00E599]/15 px-2.5 py-0.5 font-bold text-[#00E599] hover:bg-[#00E599]/25 shadow-sm'
+                        : 'text-slate-400 hover:text-[#00E599]'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </nav>
