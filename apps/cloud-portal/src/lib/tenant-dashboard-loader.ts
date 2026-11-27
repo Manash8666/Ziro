@@ -409,8 +409,12 @@ export async function loadTenantDashboardSnapshot(
     slug: tenantRow.slug,
     displayName: tenantRow.display_name,
     customDomain: tenantRow.custom_domain,
-    storefrontUrl: `https://${primaryHost}`,
-    posUrl: `https://pos.${rootDomain}`,
+    storefrontUrl:
+      process.env.NEXT_PUBLIC_STOREFRONT_URL ||
+      (tenantRow.custom_domain ? `https://${tenantRow.custom_domain}` : `https://${primaryHost}`),
+    posUrl:
+      process.env.NEXT_PUBLIC_POS_URL ||
+      `https://pos.${rootDomain}`,
     ucpManifestUrl: `https://${primaryHost}/.well-known/ucp`,
     planTier,
     planName: planDef.name,

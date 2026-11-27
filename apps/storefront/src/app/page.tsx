@@ -17,14 +17,26 @@ import { FitmentFinder } from '../components/FitmentFinder';
 import { SemanticFitmentSearchBar } from '../components/search/SemanticFitmentSearchBar';
 
 export default function StorefrontHomePage() {
+  const portalBase =
+    process.env.NEXT_PUBLIC_PORTAL_URL ??
+    (process.env.NODE_ENV === 'production'
+      ? 'https://ziro-orcin.vercel.app'
+      : 'http://localhost:3002');
+  const portalUrl = portalBase.endsWith('/admin') ? portalBase : `${portalBase}/admin`;
+  const posUrl =
+    process.env.NEXT_PUBLIC_POS_URL ??
+    (process.env.NODE_ENV === 'production'
+      ? 'https://ziro-pos.vercel.app'
+      : 'http://localhost:3001');
+
   return (
     <div className="min-h-screen bg-[#080A0D] text-[#F4F6F9]">
       {/* Precision Multi-App Navigation */}
       <ZiroNavigationHeader
         activePath="/"
         taxRegime="GST"
-        portalUrl="http://localhost:3002/admin"
-        posUrl="http://localhost:3001"
+        portalUrl={portalUrl}
+        posUrl={posUrl}
         renderLink={({ href, children, className }) => (
           <Link href={href} className={className}>
             {children}
@@ -101,7 +113,7 @@ export default function StorefrontHomePage() {
                 Launch 3D Configurator
               </Link>
               <a
-                href="http://localhost:3001"
+                href={posUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-2 text-xs font-mono text-[#8B95A5] hover:text-[#00E599] transition-colors ml-auto"
@@ -291,8 +303,8 @@ export default function StorefrontHomePage() {
           <div className="flex items-center gap-6 font-mono text-[11px]">
             <Link href="/catalog" className="hover:text-[#F4F6F9]">Catalog</Link>
             <Link href="/configure" className="hover:text-[#F4F6F9]">3D Studio</Link>
-            <a href="http://localhost:3002/admin" className="hover:text-[#F4F6F9]">Merchant Admin</a>
-            <a href="http://localhost:3001" className="hover:text-[#F4F6F9]">Counter POS</a>
+            <a href={portalUrl} className="hover:text-[#F4F6F9]">Merchant Admin</a>
+            <a href={posUrl} className="hover:text-[#F4F6F9]">Counter POS</a>
             <a href="https://github.com/Manash8666/Ziro" target="_blank" rel="noreferrer" className="text-[#00E599] hover:underline">
               GitHub Repo ↗
             </a>

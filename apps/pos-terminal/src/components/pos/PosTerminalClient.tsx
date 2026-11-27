@@ -298,6 +298,35 @@ export function PosTerminalClient() {
           <span className="hidden sm:inline-flex items-center rounded-full bg-[#00E599]/10 px-2.5 py-0.5 text-[11px] font-mono font-medium text-[#00E599] border border-[#00E599]/30">
             0% GMV Toll Locked
           </span>
+
+          {/* Cross-App Navigation Links */}
+          <a
+            href={
+              process.env.NEXT_PUBLIC_STOREFRONT_URL ??
+              (process.env.NODE_ENV === 'production'
+                ? 'https://ziro-storefront.vercel.app'
+                : 'http://localhost:3000')
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[#1F2633] bg-[#12161E] px-2 py-0.5 font-mono text-[11px] text-[#8B95A5] hover:text-[#00E599]"
+          >
+            Storefront ↗
+          </a>
+          <a
+            href={
+              process.env.NEXT_PUBLIC_PORTAL_URL
+                ? `${process.env.NEXT_PUBLIC_PORTAL_URL.replace(/\/admin\/?$/, '')}/admin`
+                : (process.env.NODE_ENV === 'production'
+                    ? 'https://ziro-orcin.vercel.app/admin'
+                    : 'http://localhost:3002/admin')
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="hidden lg:inline-flex items-center gap-1 rounded-md border border-[#1F2633] bg-[#12161E] px-2 py-0.5 font-mono text-[11px] text-[#8B95A5] hover:text-[#00E599]"
+          >
+            Admin Portal ↗
+          </a>
         </div>
 
         {/* Barcode Search / Scanner Input */}

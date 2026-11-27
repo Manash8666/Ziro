@@ -156,7 +156,12 @@ export function MerchantAdminShellClient() {
         <div className="flex items-center gap-3">
           {/* Quick links to live apps */}
           <a
-            href="http://localhost:3000"
+            href={
+              process.env.NEXT_PUBLIC_STOREFRONT_URL ??
+              (process.env.NODE_ENV === 'production'
+                ? 'https://ziro-storefront.vercel.app'
+                : 'http://localhost:3000')
+            }
             target="_blank"
             rel="noreferrer"
             className="hidden sm:inline-flex text-xs font-mono text-[#8B95A5] hover:text-[#00E599]"
@@ -164,7 +169,12 @@ export function MerchantAdminShellClient() {
             Storefront ↗
           </a>
           <a
-            href="http://localhost:3001"
+            href={
+              process.env.NEXT_PUBLIC_POS_URL ??
+              (process.env.NODE_ENV === 'production'
+                ? 'https://ziro-pos.vercel.app'
+                : 'http://localhost:3001')
+            }
             target="_blank"
             rel="noreferrer"
             className="hidden sm:inline-flex text-xs font-mono text-[#8B95A5] hover:text-[#00E599]"
