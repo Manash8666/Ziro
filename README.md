@@ -37,12 +37,19 @@ ziro-commerce-os/
 │   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + Rollback-safe Workflows + Admin BOM/Fitment Studio
 │   └── pulse-ai/            # Ziro Pulse (FastAPI: pgvector search, AI COD-RTO Shield, UCP/ACP/WebMCP)
 ├── packages/
+│   ├── migrator/            # 1-Click Shopify CSV & WooCommerce REST catalog importer with HSN/GST inference
 │   ├── shared-types/        # Shared Zod schemas, TypeScript interfaces, GST 38+1 & DDP calculators
 │   ├── ui-kit/              # Dark Precision design tokens, Programmatic SVGs, ZiroTable, ZiroDrawer, 3D
 │   └── ziro-rails/          # Multi-tenant resolver, Valkey cart locks, Razorpay, Stripe, ONDC adapters
-└── docker/
-    ├── caddy/Caddyfile      # Automated reverse proxy with on-demand SSL certificates
-    └── docker-compose.yml   # 7 production services (PostgreSQL 17, Valkey, Meilisearch, PostHog, etc.)
+├── docker/
+│   ├── caddy/Caddyfile      # Hardened On-Demand TLS with shared secret gate & strict security headers
+│   ├── postgres/            # PostgreSQL 17 Row-Level Security (RLS) policies & migration tables
+│   └── docker-compose.yml   # 7 production services (PostgreSQL 17, Valkey, Meilisearch, PostHog, etc.)
+├── scripts/
+│   ├── backup-pg-r2.sh      # Encrypted zstd AES-256-CBC backup to Cloudflare R2 with SHA-256 integrity
+│   └── verify-webhooks-and-hil.ts # Hardware-in-the-Loop (ESC/POS, HID burst) & HMAC webhook replay
+└── tests/
+    └── load/                # k6 400-VU flash-sale race condition & 100-VU POS delta-sync stress suite
 ```
 
 ---
@@ -95,13 +102,16 @@ pnpm dev
 Ziro enforces test-driven development (TDD) across all packages with isolated unit and integration suites:
 
 ```bash
-# Run all TypeScript / React test suites (87 tests across 21 files)
+# Run all TypeScript / React test suites (115 tests across 25 files)
 pnpm test
 
 # Run Python AI test suite (9 tests: vector search, RTO shield, KYA governance)
 python -m pytest apps/pulse-ai/tests -v
 
-# Typecheck all 7 packages
+# Run Hardware-in-the-Loop & Signed Webhook Verification (9/9 assertions)
+pnpm verify:hil
+
+# Typecheck all workspace packages
 pnpm typecheck
 
 # Verify 100% permissive open-source licenses (zero GPL/AGPL)
