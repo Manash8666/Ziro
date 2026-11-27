@@ -28,14 +28,14 @@
 
 The entire platform lives inside a single **Turborepo** workspace so storefronts, offline POS clients, cloud portals, and shared Zod schemas remain strictly typed and versioned together:
 
-```
+```text
 ziro-commerce-os/
 ├── apps/
-│   ├── storefront/          # Next.js 16 App Router + Tailwind v4 + GSAP + Three.js 3D + Payload CMS v3
+│   ├── storefront/          # Next.js 16 App Router + Tailwind v4 + Three.js 3D + Semantic Fitment Search
 │   ├── pos-terminal/        # Offline-first Serwist PWA + Dexie IndexedDB + ESC/POS thermal printing
-│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Caddy On-Demand TLS + ROI Calculator
-│   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + Rollback-safe Workflows + Admin BOM/Fitment Studio
-│   └── pulse-ai/            # Ziro Pulse (FastAPI: pgvector search, AI COD-RTO Shield, UCP/ACP/WebMCP)
+│   ├── cloud-portal/        # Next.js 16 Multi-Tenant SaaS Portal + Caddy On-Demand TLS + 1-Click Migration
+│   ├── commerce-engine/     # Ziro Core (Medusa.js v2) + PostgreSQL 17 RLS + Admin BOM/Fitment Studio
+│   └── pulse-ai/            # Ziro Pulse (FastAPI: 1024-dim BAAI/bge-m3 pgvector, AI COD-RTO Shield, UCP/ACP)
 ├── packages/
 │   ├── migrator/            # 1-Click Shopify CSV & WooCommerce REST catalog importer with HSN/GST inference
 │   ├── shared-types/        # Shared Zod schemas, TypeScript interfaces, GST 38+1 & DDP calculators
@@ -43,9 +43,14 @@ ziro-commerce-os/
 │   └── ziro-rails/          # Multi-tenant resolver, Valkey cart locks, Razorpay, Stripe, ONDC adapters
 ├── docker/
 │   ├── caddy/Caddyfile      # Hardened On-Demand TLS with shared secret gate & strict security headers
-│   ├── postgres/            # PostgreSQL 17 Row-Level Security (RLS) policies & migration tables
-│   └── docker-compose.yml   # 7 production services (PostgreSQL 17, Valkey, Meilisearch, PostHog, etc.)
+│   ├── postgres/            # PostgreSQL 17 Row-Level Security (RLS) policies & vector tables
+│   ├── Dockerfile.engine    # Multi-stage production container for Commerce Engine
+│   ├── Dockerfile.pulse     # Multi-stage container for Python 3.12 FastAPI Pulse AI
+│   ├── Dockerfile.web       # Multi-stage container for Next.js 16 web applications
+│   └── docker-compose.prod.yml # Production 9-service stack with isolated internal data network
 ├── scripts/
+│   ├── bootstrap-vps.sh     # Idempotent Ubuntu 22.04/24.04 VPS provisioning with zero-trust UFW firewall
+│   ├── seed-public-sandbox.ts # Deterministic public sandbox tenants seeder & 0% fee verification
 │   ├── backup-pg-r2.sh      # Encrypted zstd AES-256-CBC backup to Cloudflare R2 with SHA-256 integrity
 │   └── verify-webhooks-and-hil.ts # Hardware-in-the-Loop (ESC/POS, HID burst) & HMAC webhook replay
 └── tests/
@@ -59,7 +64,7 @@ ziro-commerce-os/
 ### Prerequisites
 
 - **Node.js**: `>= 22.22.0`
-- **pnpm**: `>= 9.0.0`
+- **pnpm**: `>= 12.15.0`
 - **Python**: `>= 3.11` (for `pulse-ai`)
 - **Docker & Docker Compose**
 
@@ -102,14 +107,17 @@ pnpm dev
 Ziro enforces test-driven development (TDD) across all packages with isolated unit and integration suites:
 
 ```bash
-# Run all TypeScript / React test suites (115 tests across 25 files)
+# Run all TypeScript / React test suites (132 tests across 28 files)
 pnpm test
 
-# Run Python AI test suite (9 tests: vector search, RTO shield, KYA governance)
+# Run Python AI test suite (14 tests: 1024-dim BAAI/bge-m3 embeddings, RTO, KYA, UCP, ACP)
 python -m pytest apps/pulse-ai/tests -v
 
 # Run Hardware-in-the-Loop & Signed Webhook Verification (9/9 assertions)
 pnpm verify:hil
+
+# Verify public sandbox tenants & 0% GMV fee invariant
+node --experimental-strip-types scripts/seed-public-sandbox.ts --verify-only
 
 # Typecheck all workspace packages
 pnpm typecheck
@@ -122,4 +130,4 @@ pnpm licenses list
 
 ## License
 
-This repository is licensed under the permissive **MIT License**. All dependencies are strictly verified to use permissive open-source licenses (`MIT`, `Apache 2.0`, `BSD-3-Clause`, `PostgreSQL`, `ISC`).
+This repository is licensed under the permissive **MIT License**. All dependencies are strictly verified to use permissive open-source licenses (`MIT`, `Apache 2.0`, `BSD-3-Clause`, `PostgreSQL`, `ISC`, `BlueOak-1.0.0`).

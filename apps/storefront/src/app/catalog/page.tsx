@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { ZiroWordmark, StatusBadge } from '@ziro/ui-kit';
 import { ProductCard, type ProductItem } from '../../components/ProductCard';
+import { SemanticFitmentSearchBar } from '../../components/search/SemanticFitmentSearchBar';
+import type { SemanticSearchResultItem } from '../actions/semantic-search';
 
 const SAMPLE_CATALOG: ProductItem[] = [
   {
@@ -65,8 +67,17 @@ const SAMPLE_CATALOG: ProductItem[] = [
 export default function CatalogPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [semanticResults, setSemanticResults] = useState<SemanticSearchResultItem[] | null>(null);
+
+  const handleSemanticResults = (results: SemanticSearchResultItem[]) => {
+    setSemanticResults(results);
+  };
 
   const filteredProducts = SAMPLE_CATALOG.filter((p) => {
+    // If semantic search produced results, filter against those handles
+    if (semanticResults && semanticResults.length > 0) {
+      return semanticResults.some((sr) => sr.handle === p.handle);
+    }
     const matchesCat = selectedCategory === 'All' || p.category === selectedCategory;
     const matchesQuery =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -93,6 +104,11 @@ export default function CatalogPage() {
         </nav>
       </header>
 
+      {/* Semantic Search & Fitment Section */}
+      <section>
+        <SemanticFitmentSearchBar onResultsChange={handleSemanticResults} />
+      </section>
+
       {/* Catalog Title & Search Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -107,27 +123,43 @@ export default function CatalogPage() {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by SKU, Part, or Vehicle..."
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            if (semanticResults) setSemanticResults(null);
+          }}
+          placeholder="Filter SKU, Part, or Vehicle..."
           className="w-full md:w-80 rounded-lg border border-[#1F2633] bg-[#090B0E] px-4 py-2 text-sm text-[#F4F6F9] focus:border-[#00E599] focus:outline-none font-mono"
         />
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {['All', 'Braking Systems', 'Suspension', 'Powertrain'].map((cat) => (
+      <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2">
+          {['All', 'Braking Systems', 'Suspension', 'Powertrain'].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => {
+                setSelectedCategory(cat);
+                if (semanticResults) setSemanticResults(null);
+              }}
+              className={`px-4 py-2 text-xs font-mono rounded-lg transition-colors ${
+                selectedCategory === cat && !semanticResults
+                  ? 'bg-[#00E599] text-[#090B0E] font-bold'
+                  : 'bg-[#12161E] border border-[#1F2633] text-[#8B95A5] hover:text-[#F4F6F9]'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        {semanticResults && (
           <button
-            key={cat}
-            onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 text-xs font-mono rounded-lg transition-colors ${
-              selectedCategory === cat
-                ? 'bg-[#00E599] text-[#090B0E] font-bold'
-                : 'bg-[#12161E] border border-[#1F2633] text-[#8B95A5] hover:text-[#F4F6F9]'
-            }`}
+            onClick={() => setSemanticResults(null)}
+            className="text-xs text-[#00E599] hover:underline font-mono"
           >
-            {cat}
+            Clear AI Filter
           </button>
-        ))}
+        )}
       </div>
 
       {/* Products Grid */}

@@ -9,14 +9,18 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* tsconfig.base.json turbo.j
 COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/ui-kit/package.json ./packages/ui-kit/
 COPY packages/ziro-rails/package.json ./packages/ziro-rails/
+COPY packages/ziro-migrator/package.json ./packages/ziro-migrator/
 COPY apps/commerce-engine/package.json ./apps/commerce-engine/
 COPY apps/storefront/package.json ./apps/storefront/
 COPY apps/pos-terminal/package.json ./apps/pos-terminal/
+COPY apps/cloud-portal/package.json ./apps/cloud-portal/
 RUN pnpm install --frozen-lockfile --filter . --filter @ziro/core...
 
 FROM deps AS builder
 COPY packages/shared-types ./packages/shared-types
+COPY packages/ui-kit ./packages/ui-kit
 COPY packages/ziro-rails ./packages/ziro-rails
+COPY packages/ziro-migrator ./packages/ziro-migrator
 COPY apps/commerce-engine ./apps/commerce-engine
 RUN pnpm --filter @ziro/core... build
 

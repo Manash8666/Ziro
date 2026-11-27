@@ -7,7 +7,56 @@
   }
 }
 
-:443 {
+# Cloud Portal (SaaS management, tenant onboarding, billing, migration)
+cloud.{$BASE_DOMAIN:ziro.localhost} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    -Server
+  }
+  reverse_proxy cloud-portal:3002
+}
+
+# POS Terminal (Counter sales, barcode scanner, offline Serwist PWA)
+pos.{$BASE_DOMAIN:ziro.localhost} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+    -Server
+  }
+  reverse_proxy pos-terminal:3001
+}
+
+# Commerce Engine API
+api.{$BASE_DOMAIN:ziro.localhost} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    -Server
+  }
+  reverse_proxy commerce-engine:9000
+}
+
+# Pulse AI Engine (Embeddings, UCP, ACP, RTO Shield)
+pulse.{$BASE_DOMAIN:ziro.localhost} {
+  encode zstd gzip
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    -Server
+  }
+  reverse_proxy pulse-ai:8000
+}
+
+# Default & On-Demand TLS for merchant custom storefront domains & root domain
+:443, :80 {
   tls {
     on_demand
   }
@@ -23,7 +72,7 @@
   }
 
   @agent_protocols {
-    path /.well-known/ucp /ucp/* /api/agent/* /v1/rto/* /v1/telemetry/*
+    path /.well-known/ucp /ucp/* /api/agent/* /v1/rto/* /v1/telemetry/* /v1/embeddings/*
   }
   handle @agent_protocols {
     reverse_proxy pulse-ai:8000

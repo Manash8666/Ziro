@@ -14,7 +14,9 @@ class Settings(BaseSettings):
     embedding_model_name: str = "BAAI/bge-m3"
     embedding_remote_url: str = ""
     embedding_dimension: int = 1024
+    internal_service_token: str = "ziro-dev-service-token"
     kya_jwks_secret: str = "ziro-kya-dev-secret"
+    kya_hmac_secret: str = "ziro-kya-hmac-secret"
     kya_require_signed_jwt: bool = False
     platform_fee_bps: int = 0
     rto_high_risk_threshold: float = 0.72

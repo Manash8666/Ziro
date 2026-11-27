@@ -1,0 +1,267 @@
+name: ziro-production
+
+networks:
+  ziro_edge:
+    driver: bridge
+  ziro_data:
+    driver: bridge
+    internal: true
+
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg17
+    container_name: ziro-prod-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ziro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-ziro_production}
+    volumes:
+      - ziro_prod_pgdata:/home/postgres/pgdata/data
+      - ./postgres/init-extensions.sql:/docker-entrypoint-initdb.d/000-init-extensions.sql:ro
+      - ./postgres/001_ziro_extensions.sql:/docker-entrypoint-initdb.d/001_ziro_extensions.sql:ro
+      - ./postgres/02-tenant-rls.sql:/docker-entrypoint-initdb.d/002-tenant-rls.sql:ro
+      - ./postgres/03-migration-tables-rls.sql:/docker-entrypoint-initdb.d/003-migration-tables-rls.sql:ro
+      - ./postgres/04-pulse-embeddings-rls.sql:/docker-entrypoint-initdb.d/004-pulse-embeddings-rls.sql:ro
+      - ./postgres/05-sandbox-invariants-rls.sql:/docker-entrypoint-initdb.d/005-sandbox-invariants-rls.sql:ro
+    networks:
+      - ziro_data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ziro} -d ${POSTGRES_DB:-ziro_production}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: ziro-prod-valkey
+    restart: always
+    command: valkey-server --appendonly yes --requirepass ${VALKEY_PASSWORD:?VALKEY_PASSWORD is required} --maxmemory 1gb --maxmemory-policy allkeys-lru
+    volumes:
+      - ziro_prod_valkeydata:/data
+    networks:
+      - ziro_data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "-a", "${VALKEY_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12
+    container_name: ziro-prod-meilisearch
+    restart: always
+    environment:
+      MEILI_ENV: production
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?MEILI_MASTER_KEY is required}
+    volumes:
+      - ziro_prod_meilidata:/meili_data
+    networks:
+      - ziro_data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:7700/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pulse-ai:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.pulse
+    container_name: ziro-prod-pulse-ai
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ziro_production}
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN:?ZIRO_INTERNAL_SERVICE_TOKEN is required}
+      KYA_JWKS_SECRET: ${KYA_SIGNING_SECRET:?KYA_SIGNING_SECRET is required}
+      KYA_HMAC_SECRET: ${KYA_HMAC_SECRET:?KYA_HMAC_SECRET is required}
+      KYA_REQUIRE_SIGNED_JWT: "false"
+      ZIRO_PLATFORM_FEE_BPS: 0
+      TENANCY_MODE: multi
+      EMBEDDING_PROVIDER: bge_m3
+      EMBEDDING_MODEL_NAME: BAAI/bge-m3
+      EMBEDDING_DIMENSION: 1024
+      RTO_HIGH_RISK_THRESHOLD: 0.72
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ziro_data
+      - ziro_edge
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  commerce-engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.engine
+    container_name: ziro-prod-commerce-engine
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: "9000"
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ziro_production}
+      REDIS_URL: redis://:${VALKEY_PASSWORD}@valkey:6379/0
+      MEILISEARCH_HOST: http://meilisearch:7700
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
+      PULSE_AI_URL: http://pulse-ai:8000
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      COOKIE_SECRET: ${COOKIE_SECRET:?COOKIE_SECRET is required}
+      ZIRO_INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN}
+      ZIRO_PLATFORM_FEE_BPS: 0
+      TENANCY_MODE: multi
+      POS_CONFLICT_POLICY: FORCE_SALE_WITH_ALERT
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-}
+      STORE_CORS: "*"
+      ADMIN_CORS: "*"
+      AUTH_CORS: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+    networks:
+      - ziro_data
+      - ziro_edge
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  cloud-portal:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        APP_DIR: apps/cloud-portal
+        APP_PKG: "@ziro/cloud-portal"
+        PORT: "3002"
+    container_name: ziro-prod-cloud-portal
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: "3002"
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ziro_production}
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      PULSE_AI_URL: http://pulse-ai:8000
+      CADDY_INTERNAL_SECRET: ${CADDY_INTERNAL_SECRET:?CADDY_INTERNAL_SECRET is required}
+      ZIRO_INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN}
+      ZIRO_PLATFORM_FEE_BPS: 0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      commerce-engine:
+        condition: service_healthy
+    networks:
+      - ziro_data
+      - ziro_edge
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3002/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  storefront:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        APP_DIR: apps/storefront
+        APP_PKG: "@ziro/storefront"
+        PORT: "3000"
+    container_name: ziro-prod-storefront
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgres://${POSTGRES_USER:-ziro}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-ziro_production}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET is required}
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      PULSE_AI_URL: http://pulse-ai:8000
+      ZIRO_INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN}
+      ZIRO_PLATFORM_FEE_BPS: 0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      commerce-engine:
+        condition: service_healthy
+      pulse-ai:
+        condition: service_healthy
+    networks:
+      - ziro_data
+      - ziro_edge
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  pos-terminal:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.web
+      args:
+        APP_DIR: apps/pos-terminal
+        APP_PKG: "@ziro/pos"
+        PORT: "3001"
+    container_name: ziro-prod-pos-terminal
+    restart: always
+    environment:
+      NODE_ENV: production
+      PORT: "3001"
+      COMMERCE_ENGINE_URL: http://commerce-engine:9000
+      ZIRO_INTERNAL_SERVICE_TOKEN: ${ZIRO_INTERNAL_SERVICE_TOKEN}
+      ZIRO_PLATFORM_FEE_BPS: 0
+    depends_on:
+      commerce-engine:
+        condition: service_healthy
+    networks:
+      - ziro_data
+      - ziro_edge
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  caddy:
+    image: caddy:2.9-alpine
+    container_name: ziro-prod-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CADDY_INTERNAL_SECRET: ${CADDY_INTERNAL_SECRET}
+      BASE_DOMAIN: ${BASE_DOMAIN:-ziro.build}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ziro_caddy_data:/data
+      - ziro_caddy_config:/config
+    networks:
+      - ziro_edge
+    depends_on:
+      - storefront
+      - cloud-portal
+      - pos-terminal
+      - commerce-engine
+      - pulse-ai
+
+volumes:
+  ziro_prod_pgdata:
+  ziro_prod_valkeydata:
+  ziro_prod_meilidata:
+  ziro_caddy_data:
+  ziro_caddy_config:
