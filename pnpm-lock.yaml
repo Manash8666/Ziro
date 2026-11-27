@@ -181,6 +181,9 @@ importers:
 
   apps/cloud-portal:
     dependencies:
+      '@ziro/migrator':
+        specifier: workspace:*
+        version: link:../../packages/ziro-migrator
       '@ziro/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -224,6 +227,9 @@ importers:
       '@medusajs/medusa':
         specifier: ^2.23.0
         version: 2.23.0(a78ac1383e4b9134d2526c0f8e27242d)
+      '@ziro/migrator':
+        specifier: workspace:*
+        version: link:../../packages/ziro-migrator
       '@ziro/rails':
         specifier: workspace:*
         version: link:../../packages/ziro-rails
